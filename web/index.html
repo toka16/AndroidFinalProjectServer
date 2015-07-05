@@ -6,11 +6,19 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Log In</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="js/login.js"></script>
     </head>
     <body>
-        <div>TODO write content</div>
+        <h3 id="status" align="center"></h3>
+        <form action="#" id="form" style="width: 40%; margin: auto;">
+            <p><input type="text" id="username" placeholder="Username" required/></p>
+            <p><input type="password" id="password" placeholder="Password" required/></p>
+            <p><input type="submit" value="Log In"/></p>
+        </form>
     </body>
+    
 </html>

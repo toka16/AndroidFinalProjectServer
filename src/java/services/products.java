@@ -10,10 +10,13 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
+import logic.AuthManager;
+import model.json.Product;
 
 /**
  * REST Web Service
@@ -25,9 +28,6 @@ import javax.ws.rs.core.Response;
 @Produces("application/json")
 public class products {
 
-    @Context
-    private UriInfo context;
-
     /**
      * Creates a new instance of products
      */
@@ -36,23 +36,30 @@ public class products {
 
     /**
      * Retrieves representation of an instance of services.products
-     * @return an instance of java.lang.String
+     * @param token
+     * @return version number
      */
     @GET
     @Path("/version")
-    public Response getVersion() {
-        //TODO return proper representation object
+    public Response getVersion(@CookieParam("token") String token) {
+        if(!AuthManager.getInstance().checkUserToken(token)){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         return Response.ok("16").build();
     }
 
     /**
      * PUT method for updating or creating an instance of products
-     * @param content representation for the resource
+     * @param token
      * @return an HTTP response with content of the updated or created resource.
      */
     @GET
-    public Response getProducts() {
+    public Response getProducts(@CookieParam("token") String token) {
+        if(!AuthManager.getInstance().checkUserToken(token))
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         
-        return Response.ok(/* full json object goes here */).build();
+        Product[] arr = new Product[]{new Product("name1", "desc1asdfghjklasdfghjklasdf", 1.0), new Product("name2", "desc2", 2.0)};
+        
+        return Response.ok(arr).build();
     }
 }

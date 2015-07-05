@@ -5,17 +5,13 @@
  */
 package services;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
+import logic.AuthManager;
 import model.json.Product;
 
 /**
@@ -28,9 +24,6 @@ import model.json.Product;
 @Produces("application/json")
 public class admin {
 
-    @Context
-    private UriInfo context;
-
     /**
      * Creates a new instance of admin
      */
@@ -38,8 +31,20 @@ public class admin {
     }
 
     @POST
+    @Path("/products")
     public Response addProduct(@CookieParam("token") String token, Product product){
-        // check token and save product
+        if(!AuthManager.getInstance().checkAdminToken(token))
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        
+        if(!validateProduct(product))
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        
+        // save product
+        
         return Response.ok().build();
+    }
+
+    private boolean validateProduct(Product product) {
+        return true;
     }
 }

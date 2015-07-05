@@ -5,18 +5,19 @@
  */
 package services;
 
+import db.UserManager;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import logic.AuthManager;
 import model.json.User;
-import model.json.UserResponse;
 
 /**
  * REST Web Service
@@ -28,9 +29,6 @@ import model.json.UserResponse;
 @Consumes("application/json")
 public class users {
 
-    @Context
-    private UriInfo context;
-
     /**
      * Creates a new instance of GenericResource
      */
@@ -39,41 +37,55 @@ public class users {
 
     /**
      * Check username and password
+     * @param user
      * @return String token if username and password is valid, else returns Status code Not Acceptable(406)
      */
     @POST
     @Path("/login")
     public Response login(User user) {
-        // check username and password
-        // generate new UUID token
-        UserResponse res = new UserResponse();
-        res.token = "user token";
-        return Response.ok(res).build();
+        Status status = UserManager.getInstance().login(user);
+        System.out.println("status: "+status);
+        Response.ResponseBuilder builder = Response.status(status);
+        if(status == Status.OK){
+            String token = AuthManager.getInstance().loginUser(user);
+            NewCookie c = new NewCookie("token", token, "/", "localhost", "", 1*60*60*24, false);
+            builder.cookie(c);
+        }else{
+            builder.entity("Invalide username or password");
+        }
+        return builder.build();
     }
 
     /**
      * Register new user
+     * @param user
      * @return String token if everything is okay, else returns status code Conflict(409)
      */
     @POST
     @Path("/register")
     public Response register(User user) {
-        // register user
-        System.out.println("into register");
-        UserResponse res = new UserResponse();
-        res.description = "username already in use";
-        return Response.status(Response.Status.CONFLICT).entity(res).build();
+        Status status = UserManager.getInstance().register(user);
+        Response.ResponseBuilder builder = Response.status(status);
+        if(status == Status.CREATED){
+            String token = AuthManager.getInstance().loginUser(user);
+            builder.cookie(new NewCookie("token", token));
+        }
+        return builder.build();
     }
     
     /**
-     * Get user info with token
+     * 
      * @param token
-     * @return Status OK(200) and User data or Status Not Found(404)
+     * @return 
      */
-    @GET
-    @Path("/{token}")
-    public Response checkToken(@PathParam("token") String token){
-        return Response.ok(/* User object here */).build();
+    @POST
+    @Path("/logout")
+    public Response logout(@CookieParam("token") String token){
+        if(token == null)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        
+        AuthManager.getInstance().logoutUser(token);
+        return Response.ok().build();
     }
     
 }

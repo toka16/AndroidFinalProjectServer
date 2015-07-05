@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Admin Panel</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+        <script src="js/admin_panel.js"></script>
+        <link href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <fieldset>
+            <legend>Products</legend>
+            <form id="new_product" action="#">
+                <input type="text" id="name" placeholder="Product Name" required/>
+                <input type="text" id="description" placeholder="Product Description" required/>
+                <input type="number" id="price" step="0.01" min="0.01" placeholder="Product Price" required/>
+                <input type="submit" value="Add">
+            </form>
+            <table id="products" class="display" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </fieldset>
+    </body>
+</html>

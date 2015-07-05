@@ -20,4 +20,20 @@ public class User {
     @XmlElement
     public String password;
     
+    @XmlElement
+    public String email;
+    
+    @XmlElement
+    public String primaryNumber;
+    
+    @XmlElement
+    public String mobileNumber;
+    
+    public Role role;
+            
+    public static enum Role{
+        USER,
+        ADMIN
+    }
+    
 }
