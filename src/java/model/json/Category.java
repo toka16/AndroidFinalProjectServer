@@ -13,26 +13,20 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author toka
  */
 @XmlRootElement
-public class Product {
-    @XmlElement
-    public int id;
-    
+public class Category {
     @XmlElement
     public String name;
     
     @XmlElement
-    public String description;
+    public String[] products;
     
-    @XmlElement
-    public double price;
-    
-    public Product(){}
-    
-    public Product(int id, String name, String desc, double price){
-        this.id = id;
+    public Category(){}
+    public Category(String name){
         this.name = name;
-        description = desc;
-        this.price = price;
     }
     
+    @Override
+    public String toString(){
+        return "category => " + name + " ["+products.length+"]";
+    }
 }

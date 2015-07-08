@@ -14,26 +14,33 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class User {
-    @XmlElement
-    public String username;
-    
-    @XmlElement
-    public String password;
     
     @XmlElement
     public String email;
     
     @XmlElement
-    public String primaryNumber;
+    public String password;
     
     @XmlElement
-    public String mobileNumber;
+    public String first_name;
+    
+    @XmlElement
+    public String last_name;
+    
+    @XmlElement
+    public String primary_number;
+    
+    @XmlElement
+    public String card_number;
+    
+    @XmlElement
+    public String mobile_number;
     
     public Role role;
-            
-    public static enum Role{
-        USER,
-        ADMIN
-    }
     
+    
+    public static enum Role{
+        ADMIN,
+        USER
+    }
 }

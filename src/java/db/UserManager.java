@@ -5,7 +5,6 @@
  */
 package db;
 
-import javax.ws.rs.core.Response.Status;
 import model.json.User;
 
 /**
@@ -24,23 +23,34 @@ public class UserManager {
         return manager;
     }
     
-    public Status login(User user){
-        if(user == null || user.username == null || user.password == null){
-            return Status.BAD_REQUEST;
-        }
-        if(user.username.equals("bla")){
-            return Status.NOT_ACCEPTABLE;
-        }
-        user.email = "temp@bla.com";
-        user.mobileNumber = "555555555";
-        user.primaryNumber = "12345678910";
-        user.role = User.Role.ADMIN;
+
+    public User login(String email, String password) {
+        if(!email.contains("@"))
+            return null;
         
-        return Status.OK;
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.mobile_number = "555555555";
+        user.primary_number = "12345678910";
+        user.first_name = "saxeli";
+        user.last_name = "gvari";
+        user.card_number = "1234-5678-8765-4321";
+        
+        return user;
     }
 
-    public Status register(User user) {
-        return Status.CONFLICT; // Status.CREATED;
+    public User register(String password, String email, String firstName, String lastName, String mobileNumber, String primaryNumber, String cardNumber) {
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.first_name = firstName;
+        user.last_name = lastName;
+        user.mobile_number = mobileNumber;
+        user.primary_number = primaryNumber;
+        user.card_number = cardNumber;
+        
+        return user;
     }
     
     

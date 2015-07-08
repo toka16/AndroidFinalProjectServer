@@ -6,17 +6,17 @@
 package services;
 
 import db.UserManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import logic.AuthManager;
+import model.Constants;
 import model.json.User;
 
 /**
@@ -24,9 +24,9 @@ import model.json.User;
  *
  * @author toka
  */
-@Path("/users")
-@Produces("application/json")
-@Consumes("application/json")
+@Path("/user")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public class users {
 
     /**
@@ -37,54 +37,63 @@ public class users {
 
     /**
      * Check username and password
-     * @param user
+     * @param email
+     * @param password
+     * @param request
      * @return String token if username and password is valid, else returns Status code Not Acceptable(406)
      */
     @POST
     @Path("/login")
-    public Response login(User user) {
-        Status status = UserManager.getInstance().login(user);
-        System.out.println("status: "+status);
-        Response.ResponseBuilder builder = Response.status(status);
-        if(status == Status.OK){
-            String token = AuthManager.getInstance().loginUser(user);
-            NewCookie c = new NewCookie("token", token, "/", "localhost", "", 1*60*60*24, false);
-            builder.cookie(c);
-        }else{
-            builder.entity("Invalide username or password");
+    public Response login(@FormParam("email") String email, @FormParam("password") String password, @Context HttpServletRequest request) {
+        User user = UserManager.getInstance().login(email, password);
+        if(user == null){
+            return Response.status(Status.NOT_ACCEPTABLE).entity("Invalide username or password").build();
         }
-        return builder.build();
+        
+        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+        return Response.status(Status.OK).build();
+        
     }
 
     /**
      * Register new user
-     * @param user
+     * @param password
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param primaryNumber
+     * @param cardNumber
+     * @param mobileNumber
+     * @param request
      * @return String token if everything is okay, else returns status code Conflict(409)
      */
     @POST
     @Path("/register")
-    public Response register(User user) {
-        Status status = UserManager.getInstance().register(user);
-        Response.ResponseBuilder builder = Response.status(status);
-        if(status == Status.CREATED){
-            String token = AuthManager.getInstance().loginUser(user);
-            builder.cookie(new NewCookie("token", token));
+    public Response register(@FormParam("email") String email, 
+                            @FormParam("password") String password, 
+                            @FormParam("first_name") String firstName,
+                            @FormParam("last_name") String lastName,
+                            @FormParam("primary_number") String primaryNumber,
+                            @FormParam("mobile_bumber") String mobileNumber,
+                            @FormParam("card_number") String cardNumber,
+                            @Context HttpServletRequest request) {
+        User user = UserManager.getInstance().register(email, password, firstName, lastName, mobileNumber, primaryNumber, cardNumber);
+        if(user == null){
+            return Response.status(Status.BAD_REQUEST).build();
         }
-        return builder.build();
+        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+        return Response.status(Status.OK).build();
     }
     
     /**
      * 
-     * @param token
+     * @param request
      * @return 
      */
     @POST
     @Path("/logout")
-    public Response logout(@CookieParam("token") String token){
-        if(token == null)
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        
-        AuthManager.getInstance().logoutUser(token);
+    public Response logout(@Context HttpServletRequest request){
+        request.getSession().removeAttribute(Constants.SESSION_USER_KEY);
         return Response.ok().build();
     }
     

@@ -6,19 +6,12 @@
 $(document).ready(function(){
     $("#form").submit(function(e){
         e.preventDefault();
-        var user = {};
-        user.username = $("#username").val();
-        user.password = $("#password").val();
         $.ajax({
-            headers: { 
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
-            },
             type: 'POST',
-            url: 'webapi/users/login',
-            data: JSON.stringify(user),
-            success: function(data){
-                window.location.replace('admin_panel.html');
+            url: 'webapi/admin/login',
+            data: $(this).serialize(),
+            success: function(){
+                window.location  = "admin_panel.html";
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $('#status').html(jqXHR.responseText);

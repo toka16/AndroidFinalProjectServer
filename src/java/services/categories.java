@@ -5,12 +5,12 @@
  */
 package services;
 
-import db.ProductManager;
+import db.CategoryManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -23,21 +23,22 @@ import model.json.User;
  *
  * @author toka
  */
-@Path("/product")
+@Path("/category")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class products {
+public class categories {
+
 
     /**
-     * Creates a new instance of products
+     * Creates a new instance of categories
      */
-    public products() {
+    public categories() {
     }
 
     /**
-     * Retrieves representation of an instance of services.products
+     * Retrieves representation of an instance of services.categories
      * @param request
-     * @return version number
+     * @return an instance of java.lang.String
      */
     @GET
     @Path("/version")
@@ -47,21 +48,22 @@ public class products {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        return Response.ok(String.valueOf(ProductManager.getInstance().getVersion())).build();
+        return Response.ok(String.valueOf(CategoryManager.getInstance().getVersion())).build();
     }
 
     /**
-     * PUT method for updating or creating an instance of products
+     * PUT method for updating or creating an instance of categories
      * @param request
      * @return an HTTP response with content of the updated or created resource.
      */
     @GET
-    public Response getProducts(@Context HttpServletRequest request) {
+    public Response getCategories(@Context HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
-        if(user == null)
+        if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         
-        return Response.ok(ProductManager.getInstance().getProducts()).build();
+        return Response.status(Response.Status.OK).entity(CategoryManager.getInstance().getCategories()).build();
     }
 }
