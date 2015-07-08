@@ -10,11 +10,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Category;
-import model.Menu;
-import model.News;
-import model.Product;
-import model.User;
+import model.model.Category;
+import model.model.Menu;
+import model.model.News;
+import model.model.Product;
+import model.model.User;
 
 /**
  *
