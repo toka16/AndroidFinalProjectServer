@@ -5,11 +5,11 @@
  */
 package database;
 
-import model.Category;
-import model.Menu;
-import model.News;
-import model.Product;
-import model.User;
+import model.model.Category;
+import model.model.Menu;
+import model.model.News;
+import model.model.Product;
+import model.model.User;
 import org.junit.Test;
 
 public class ConnectToDBTest {

@@ -29,6 +29,7 @@ public class NewsManager {
             News news = new News("name"+i, "description"+i);
             news.from_date = new Date(115, 3, 30-i).getTime();
             news.to_date = news.from_date + 20*24*60*60*1000;  //after 20 days
+            news.id = i;
             newses.add(news);
         }
         
@@ -60,8 +61,8 @@ public class NewsManager {
         return newses.add(news);
     }
 
-    public void delete(String name) {
-        News news = findNews(name);
+    public void delete(int id) {
+        News news = findNews(id);
         if(news != null){
             newses.remove(news);
             version++;
@@ -75,6 +76,26 @@ public class NewsManager {
             }
         }
         return null;
+    }
+    
+    private News findNews(int id){
+        for (News news : newses) {
+            if (news.id == id) {
+                return news;
+            }
+        }
+        return null;
+    }
+
+    public boolean updateNews(News news) {
+        News n = findNews(news.id);
+        if(n == null)
+            return false;
+        
+        newses.remove(n);
+        newses.add(news);
+        version++;
+        return true;
     }
     
 }

@@ -27,6 +27,7 @@ public class MenuManager {
         for(int i=0; i<num; i++){
             Menu m = new Menu("name"+i, "description"+i, i);
             m.image_link = "http://cdn.elite-strategies.com/wp-content/uploads/2014/04/symbol-icon-for-menu-navigation.png";
+            m.id = i;
             menus.add(m);
         }
         
@@ -58,8 +59,8 @@ public class MenuManager {
         return menus.add(menu);
     }
     
-    public void delete(String name){
-        Menu menu = findMenu(name);
+    public void delete(int id){
+        Menu menu = findMenu(id);
         if(menu != null){
             menus.remove(menu);
             version++;
@@ -74,6 +75,26 @@ public class MenuManager {
             }
         }
         return null;
+    }
+    
+    private Menu findMenu(int id){
+        for (Menu menu : menus) {
+            if (menu.id == id) {
+                return menu;
+            }
+        }
+        return null;
+    }
+
+    public boolean updateMenu(Menu menu) {
+        Menu m = findMenu(menu.id);
+        if(m == null)
+            return false;
+        
+        menus.remove(m);
+        menus.add(menu);
+        version++;
+        return true;
     }
     
 }

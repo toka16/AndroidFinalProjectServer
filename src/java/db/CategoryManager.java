@@ -24,8 +24,11 @@ public class CategoryManager{
         
         categories = new ArrayList<>();
         int num = 25;
-        for(int i=0; i<num; i++)
-            categories.add(new Category("name"+i));
+        for(int i=0; i<num; i++){
+            Category c = new Category("name"+i);
+            c.id = i;
+            categories.add(c);
+        }
         
     }
     
@@ -54,8 +57,8 @@ public class CategoryManager{
         return categories.add(category);
     }
 
-    public void delete(String name) {
-        Category category = findCategory(name);
+    public void delete(int id) {
+        Category category = findCategory(id);
         if(category != null){
             categories.remove(category);
             version++;
@@ -69,6 +72,26 @@ public class CategoryManager{
             }
         }
         return null;
+    }
+    
+    private Category findCategory(int id){
+        for (Category category : categories) {
+            if (category.id == id) {
+                return category;
+            }
+        }
+        return null;
+    }
+
+    public boolean updateCategory(Category category) {
+        Category c = findCategory(category.id);
+        if(c == null)
+            return false;
+        
+        categories.remove(c);
+        categories.add(category);
+        version++;
+        return true;
     }
 
 }

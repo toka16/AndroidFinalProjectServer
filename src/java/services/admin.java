@@ -16,6 +16,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -83,9 +84,28 @@ public class admin {
         return Response.status(Response.Status.CONFLICT).entity("'" + product.name + "' is already in use").build();
     }
     
-    @POST
-    @Path("/product/{name}")
-    public Response deleteProduct(@PathParam("name") String name, @Context HttpServletRequest request){
+    @PUT
+    @Path("/product")
+    public Response updateProduct(Product product, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null)
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        if(user.role != User.Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can change Product").build();
+        
+        if(!validateProduct(product))
+            return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
+        
+        if(ProductManager.getInstance().updateProduct(product))
+            return Response.ok(product).build();
+        
+        return Response.status(Response.Status.CONFLICT).entity("can not update product").build();
+    }
+    
+    @DELETE
+    @Path("/product/{id}")
+    public Response deleteProduct(@PathParam("id") int id, @Context HttpServletRequest request){
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null)
@@ -93,7 +113,7 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Product").build();
         
-        ProductManager.getInstance().delete(name);
+        ProductManager.getInstance().delete(id);
         return Response.ok().build();
     }
     
@@ -116,9 +136,28 @@ public class admin {
         return Response.status(Response.Status.CONFLICT).entity("'" + menu.name + "' is already in use").build();
     }
     
-    @POST
-    @Path("/menu/{name}")
-    public Response deleteMenu(@PathParam("name") String name, @Context HttpServletRequest request){
+    @PUT
+    @Path("/menu")
+    public Response updateMenu(Menu menu, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null)
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        if(user.role != User.Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can change Menu").build();
+        
+        if(!validateMenu(menu))
+            return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
+        
+        if(MenuManager.getInstance().updateMenu(menu))
+            return Response.ok(menu).build();
+        
+        return Response.status(Response.Status.CONFLICT).entity("can not update menu").build();
+    }
+    
+    @DELETE
+    @Path("/menu/{id}")
+    public Response deleteMenu(@PathParam("id") int id, @Context HttpServletRequest request){
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null)
@@ -126,14 +165,14 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Menu").build();
         
-        MenuManager.getInstance().delete(name);
+        MenuManager.getInstance().delete(id);
         return Response.ok().build();
     }
     
     
     @POST
     @Path("/news")
-    public Response addnews(News news, @Context HttpServletRequest request){
+    public Response addNews(News news, @Context HttpServletRequest request){
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null)
@@ -150,9 +189,28 @@ public class admin {
         return Response.status(Response.Status.CONFLICT).entity("'" + news.name + "' is already in use").build();
     }
     
-    @POST
-    @Path("/news/{name}")
-    public Response deleteNews(@PathParam("name") String name, @Context HttpServletRequest request){
+    @PUT
+    @Path("/news")
+    public Response updateNews(News news, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null)
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        if(user.role != User.Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can change News").build();
+        
+        if(!validateNews(news))
+            return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
+        
+        if(NewsManager.getInstance().updateNews(news))
+            return Response.ok(news).build();
+        
+        return Response.status(Response.Status.CONFLICT).entity("can not update news").build();
+    }
+    
+    @DELETE
+    @Path("/news/{id}")
+    public Response deleteNews(@PathParam("id") int id, @Context HttpServletRequest request){
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null)
@@ -160,7 +218,7 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete News").build();
         
-        NewsManager.getInstance().delete(name);
+        NewsManager.getInstance().delete(id);
         return Response.ok().build();
     }
     
@@ -183,9 +241,29 @@ public class admin {
         return Response.status(Response.Status.CONFLICT).entity("'" + category.name + "' is already in use").build();
     }
     
-    @POST
-    @Path("/category/{name}")
-    public Response deleteCategory(@PathParam("name") String name, @Context HttpServletRequest request){
+    @PUT
+    @Path("/category")
+    public Response updateCategory(Category category, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null)
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        if(user.role != User.Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can change Category").build();
+        
+        if(!validateCategory(category))
+            return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
+        
+        if(CategoryManager.getInstance().updateCategory(category))
+            return Response.ok(category).build();
+        
+        return Response.status(Response.Status.CONFLICT).entity("can not change category").build();
+    }
+    
+    
+    @DELETE
+    @Path("/category/{id}")
+    public Response deleteCategory(@PathParam("id") int id, @Context HttpServletRequest request){
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null)
@@ -193,7 +271,7 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Category").build();
         
-        CategoryManager.getInstance().delete(name);
+        CategoryManager.getInstance().delete(id);
         return Response.ok().build();
     }
 

@@ -7,13 +7,13 @@
 $(document).ready(function(){
     function productRowDesigner(url){
         return function(row, t){
-            row.eq(4).css("display", "none").addClass("id");
-            row.eq(3).css("cursor", "pointer").html('<img src="img/cross.png" width="20" height="20"> Delete').click(function(e){
+            row.eq(4).css("display", "none");
+            row.eq(3).css("cursor", "pointer").click(function(e){
                 e.stopPropagation();
                 var tr = $(this).parent();
                 $.ajax({
-                    url: url+row.eq(0).attr("title"),
-                    type: "POST",
+                    url: url+row.eq(4).html(),
+                    type: "DELETE",
                     success: function () {
                         window[t].row(tr).remove().draw();
                     },
@@ -60,15 +60,46 @@ $(document).ready(function(){
             {"width" : "5", "targets" : 3}
         ], tableRowCreated("product_table", productFieldLengthChecker, productRowDesigner("webapi/admin/product/")));
 
+    function productDataExtractor(data){
+        return [data.name, data.description, data.price, '<img src="img/cross.png" width="20" height="20"> Delete', data.id];
+    }
 
-    fillTable('webapi/product', product_table, function(data){
-        return [data.name, data.description, data.price, "", data.id];
-    });
+    fillTable('webapi/product', product_table, productDataExtractor);
     
     submitListener('#new_product', 'webapi/admin/product', productDataCollector, productSuccessor(product_table));
     
     
     $('#products').on('click', 'tbody tr', function(e){
-        alert("click");
+        $('#edit_product_id').val($("td", this).eq(4).html());
+        $('#edit_product_name').val($("td", this).eq(0).html());
+        $('#edit_product_description').val($("td", this).eq(1).html());
+        $('#edit_product_price').val($("td", this).eq(2).html());
+        $('#edit_product').show();
+        window.editing_product_row = this;
+    });
+    
+    $('#edit_product_form').submit(function(e){
+        e.preventDefault();
+        var data = {};
+        data.id = $('#edit_product_id').val();
+        data.name = $('#edit_product_name').val();
+        data.description = $('#edit_product_description').val();
+        data.price = $('#edit_product_price').val();
+        $.ajax({
+            headers: { 
+                'Accept': 'application/json',
+                'Content-Type': 'application/json' 
+            },
+            url: 'webapi/admin/product',
+            type: 'PUT',
+            dataType: 'application/json',
+            data: JSON.stringify(data),
+            error: function (e){
+                if(e.status === 200){
+                    product_table.row(editing_product_row).data(productDataExtractor(JSON.parse(e.responseText))).draw();
+                    $('#edit_product').hide();
+                }
+            }
+        });
     });
 });

@@ -45,15 +45,6 @@ public class ProductManager {
         return products.toArray(arr); 
     }
     
-    private Product findProduct(String name){
-        for (Product product : products) {
-            System.out.println(name+" vs " + product.name);
-            if (product.name.equals(name)) {
-                return product;
-            }
-        }
-        return null;
-    }
     
     public synchronized boolean addProduct(Product product){
         Product pro = findProduct(product.name);
@@ -64,13 +55,41 @@ public class ProductManager {
         return products.add(product);
     }
     
-    public synchronized void delete(String name){
-        Product pro = findProduct(name);
+    public synchronized void delete(int id){
+        Product pro = findProduct(id);
         if(pro != null){
-            System.out.println("removing"); 
             products.remove(pro);
             version++;
         }
+    }
+    
+    private Product findProduct(String name){
+        for (Product product : products) {
+            if (product.name.equals(name)) {
+                return product;
+            }
+        }
+        return null;
+    }
+    
+    private Product findProduct(int id){
+        for (Product product : products) {
+            if (product.id == id) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    public boolean updateProduct(Product product) {
+        Product p = findProduct(product.id);
+        if(p == null)
+            return false;
+        
+        products.remove(p);
+        products.add(product);
+        version++;
+        return true;
     }
     
 }

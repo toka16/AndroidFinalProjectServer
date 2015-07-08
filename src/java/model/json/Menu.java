@@ -15,6 +15,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Menu {
     @XmlElement
+    public int id;
+    
+    @XmlElement
     public String name;
     
     @XmlElement

@@ -16,6 +16,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class News {
     @XmlElement
+    public int id;
+    
+    @XmlElement
     public String name;
     
     @XmlElement

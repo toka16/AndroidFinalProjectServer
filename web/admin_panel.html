@@ -36,10 +36,13 @@ and open the template in the editor.
                 <div id="tab1" class="tab active">
                     <fieldset id="edit_product" style="display: none">
                         <legend>Edit Product</legend>
-                        <p><input id="edit_product_id" type="text" style="display: none"></p>
-                        <p><input id="edit_product_name" type="text" required></p>
-                        <p><textarea id="edit_product_description" rows="3" cols="100" required></textarea></p>
-                        <p><input id="edit_product_price" type="number"></p>
+                        <form action="#" id="edit_product_form">
+                            <p><input id="edit_product_id" type="text" style="display: none"></p>
+                            <p><input id="edit_product_name" type="text" required></p>
+                            <p><textarea id="edit_product_description" rows="3" cols="100" required></textarea></p>
+                            <p><input id="edit_product_price" type="number"></p>
+                            <p><input type="submit" value="Update"></p>
+                        </form>
                     </fieldset>
                     <table id="products" class="display" cellspacing="0" width="100%">
                         <thead>
@@ -75,6 +78,20 @@ and open the template in the editor.
                 </div>
 
                 <div id="tab2" class="tab">
+                    <fieldset id="edit_menu" style="display: none">
+                        <legend>Edit Menu</legend>
+                        <form id="edit_menu_form" action="#">
+                            <p><input id="edit_menu_id" type="text" style="display: none"></p>
+                            <p><input type="text" id="edit_menu_name" placeholder="Menu Name" required/></p>
+                            <p><textarea rows="3" cols="100" id="edit_menu_description" placeholder="Menu Description" required></textarea></p>
+                            <p><input type="number" id="edit_menu_price" step="0.01" min="0.01" placeholder="Menu Price" required/></p>
+                            <p>
+                                <input type="text" placeholder="Menu Image" id="edit_menu_image" onchange="$('#edit_menu_image_view').attr('src', $(this).val())">
+                                <img id="edit_menu_image_view" alt="Menu Image" src="" width="100" height="100">
+                            </p>
+                            <p><input type="submit" value="Update"></p>
+                        </form>
+                    </fieldset>
                     <table id="menus" class="display" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -83,6 +100,7 @@ and open the template in the editor.
                                 <th>Price</th>
                                 <th>Image</th>
                                 <th>Action</th>
+                                <th style="display: none">ID</th>
                             </tr>
                         </thead>
 
@@ -93,6 +111,7 @@ and open the template in the editor.
                                 <th>Price</th>
                                 <th>Image</th>
                                 <th>Action</th>
+                                <th style="display: none">ID</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -113,6 +132,17 @@ and open the template in the editor.
                 </div>
 
                 <div id="tab3" class="tab">
+                    <fieldset id="edit_news" style="display: none">
+                        <legend>Edit News</legend>
+                        <form id="edit_news_form" action="#">
+                            <p><input id="edit_news_id" type="text" style="display: none"></p>
+                            <p><input type="text" id="edit_news_name" placeholder="News Name" required/></p>
+                            <p><textarea rows="3" cols="100" id="edit_news_description" placeholder="News Description" required></textarea></p>
+                            <p>From: <input type="text" id="edit_news_from_date" required/></p>
+                            <p>To: <input type="text" id="edit_news_to_date" required/></p>
+                            <p><input type="submit" value="Update"></p>
+                        </form>
+                    </fieldset>
                     <table id="news" class="display" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -121,6 +151,7 @@ and open the template in the editor.
                                 <th>From Date</th>
                                 <th>To Date</th>
                                 <th>Action</th>
+                                <th style="display: none">ID</th>
                             </tr>
                         </thead>
 
@@ -131,6 +162,7 @@ and open the template in the editor.
                                 <th>From Date</th>
                                 <th>To Date</th>
                                 <th>Action</th>
+                                <th style="display: none">ID</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -138,27 +170,37 @@ and open the template in the editor.
                     <fieldset>
                         <legend>New News</legend>
                         <form id="new_news" action="#">
-                            <p><input type="text" id="news_name" placeholder="Product Name" required/></p>
-                            <p><textarea rows="3" cols="100" id="news_description" placeholder="Product Description" required></textarea></p>
-                            <p><input type="text" id="news_from_date" required></p>
-                            <p><input type="text" id="news_to_date" required></p>
+                            <p><input type="text" id="news_name" placeholder="News Name" required/></p>
+                            <p><textarea rows="3" cols="100" id="news_description" placeholder="News Description" required></textarea></p>
+                            <p>From: <input type="text" id="news_from_date" required></p>
+                            <p>To: <input type="text" id="news_to_date" required></p>
                             <p><input type="submit" value="Add"></p>
                         </form>
                     </fieldset>
                 </div>
 
                 <div id="tab4" class="tab">
+                    <fieldset id="edit_category" style="display: none">
+                        <legend>Edit Category</legend>
+                        <form id="edit_category_form" action="#">
+                            <p><input id="edit_category_id" type="text" style="display: none"></p>
+                            <p><input type="text" id="edit_category_name" placeholder="News Name" required/></p>
+                            <p><input type="submit" value="Update"></p>
+                        </form>
+                    </fieldset>
                     <table id="categories" class="display" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Action</th>
+                                <th style="display: none">ID</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
                                 <th>Name</th>
                                 <th>Action</th>
+                                <th style="display: none">ID</th>
                             </tr>
                         </tfoot>
                     </table>
