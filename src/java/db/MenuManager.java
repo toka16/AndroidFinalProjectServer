@@ -65,6 +65,7 @@ public class MenuManager {
         if(m != null)
             return false;
         
+        menu.id = menus.size()+1;
         version++;
         return menus.add(menu);
     }

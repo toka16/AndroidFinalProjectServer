@@ -34,18 +34,13 @@ $(document).ready(function () {
 
     function categorySuccessor(table) {
         return function (data) {
-            {
-                return function () {
-                    table.row.add([data.name, ""]).draw();
-                    $('#category_name').val("");
-                };
-            }
-            ;
+            table.row.add(categoryDataExtractor(data)).draw();
+            $('#category_name').val("");
         };
     }
 
     function categoryDataExtractor(data){
-        return [data.name, '<img src="img/cross.png" width="20" height="20"> Delete', data.id];
+        return [data.name, getDelete(), data.id];
     }
 
     window.category_table = initTable('#categories', [

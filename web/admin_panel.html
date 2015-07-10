@@ -40,9 +40,9 @@ and open the template in the editor.
                         <div style="display: inline-block">
                             <form action="#" id="edit_product_form">
                                 <p><input id="edit_product_id" type="text" style="display: none"></p>
-                                <p><input id="edit_product_name" type="text" required></p>
-                                <p><textarea id="edit_product_description" rows="3" cols="100" required></textarea></p>
-                                <p><input id="edit_product_price" type="number"></p>
+                                <p><input id="edit_product_name" type="text" placeholder="Product Name" required></p>
+                                <p><textarea id="edit_product_description" rows="3" cols="100" placeholder="Product Description" required></textarea></p>
+                                <p><input id="edit_product_price" placeholder="Produec Price" type="number"></p>
                                 <p>
                                     <input type="text" placeholder="Product Image" id="edit_product_image" onchange="$('#edit_product_image_view').attr('src', $(this).val())">
                                     <img id="edit_product_image_view" alt="Product Image" src="" width="100" height="100">
@@ -247,41 +247,12 @@ and open the template in the editor.
                     <fieldset>
                         <legend>New Category</legend>
                         <form id="new_category" action="#">
-                            <input type="text" id="category_name" placeholder="Product Name" required/>
+                            <input type="text" id="category_name" placeholder="Category Name" required/>
                             <input type="submit" value="Add">
                         </form>
                     </fieldset>
                 </div>
             </div>
         </div>
-        
-        
-<!--        <fieldset>
-            <legend>Products</legend>
-            <form id="new_product" action="#">
-                <input type="text" id="name" placeholder="Product Name" required style="width: 15%"/>
-                <textarea rows="3" cols="100" id="description" placeholder="Product Description" required style="width: 70%"></textarea>
-                <input type="number" id="price" step="0.01" min="0.01" placeholder="Product Price" required style="width: 5%"/>
-                <input type="submit" value="Add">
-            </form>
-            <hr>
-            <table id="products" class="display" cellspacing="0" width="100%">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-
-                <tfoot>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                    </tr>
-                </tfoot>
-            </table>
-        </fieldset>-->
     </body>
 </html>

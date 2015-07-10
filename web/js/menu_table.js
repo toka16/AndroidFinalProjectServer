@@ -67,13 +67,11 @@ $(document).ready(function(){
     
     function menuSuccessor(table){
         return function(data){{
-                return function(){
-                    table.row.add([data.name, data.description, data.price, data.image_link, ""]).draw();
-                    $('#menu_name').val("");
-                    $('#menu_description').val("");
-                    $('#menu_price').val("");
-                    $('#menu_image').val("");
-                };
+                table.row.add(menuDataExtractor(data)).draw();
+                $('#menu_name').val("");
+                $('#menu_description').val("");
+                $('#menu_price').val("");
+                $('#menu_image').val("");
             };
         };
     }

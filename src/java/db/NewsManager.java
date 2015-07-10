@@ -56,7 +56,7 @@ public class NewsManager {
         News n = findNews(news.name);
         if(n != null)
             return false;
-        
+        news.id = newses.size()+1;
         version++;
         return newses.add(news);
     }

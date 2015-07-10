@@ -52,7 +52,7 @@ public class CategoryManager{
         Category cat = findCategory(category.name);
         if(cat != null)
             return false;
-        
+        category.id = categories.size()+1;
         version++;
         return categories.add(category);
     }

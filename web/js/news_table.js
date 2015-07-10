@@ -6,10 +6,10 @@
 
 
 $(document).ready(function(){
-    $('#news_from_date').datepicker();
-    $('#news_to_date').datepicker();
-    $('#edit_news_from_date').datepicker();
-    $('#edit_news_to_date').datepicker();
+    $('#news_from_date').datepicker({ dateFormat: 'dd/mm/yy' });
+    $('#news_to_date').datepicker({ dateFormat: 'dd/mm/yy' });
+    $('#edit_news_from_date').datepicker({ dateFormat: 'dd/mm/yy' });
+    $('#edit_news_to_date').datepicker({ dateFormat: 'dd/mm/yy' });
     
     
     function newsRowDesigner(url){
@@ -40,44 +40,40 @@ $(document).ready(function(){
         data.description = $('#news_description').val();
         data.from_date = convertDateToMilliseconds($('#news_from_date').val());
         data.to_date = convertDateToMilliseconds($('#news_to_date').val());
-        console.log(data);
         return data;
     }
     
     function newsSuccessor(table){
         return function(data){{
-                return function(){
-                    table.row.add([data.name, data.description, data.from_date, data.to_date, ""]).draw();
-                    $('#news_name').val("");
-                    $('#news_description').val("");
-                    $('#news_from_date').val("");
-                    $('#news_to_date').val("");
-                };
+                table.row.add(newsDataExtractor(data)).draw();
+                $('#news_name').val("");
+                $('#news_description').val("");
+                $('#news_from_date').val("");
+                $('#news_to_date').val("");
             };
         };
     }
     
     function convertDateToMilliseconds(date){
         var arr = date.split("/");
-        return new Date(arr[2], arr[0]-1, arr[1]).getTime();
+        return new Date(arr[2], arr[1]-1, arr[0]).getTime();
     }
     
     function convertMillisecondsToDate(time){
         var date = new Date(time);
-        return date.toDateString();
+        return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
     }
 
     window.news_table = initTable('#news', [
             {"width" : "20%", "targets" : 0},
-            {"width" : "55%", "targets" : 1},
-            {"width" : "10", "targets" : 2},
-            {"width" : "10", "targets" : 3},
-            {"width" : "5", "targets" : 4}
+            {"width" : "48%", "targets" : 1},
+            {"width" : "15", "targets" : 2},
+            {"width" : "15", "targets" : 3},
+            {"width" : "2", "targets" : 4}
         ], tableRowCreated("news_table", newsRowDesigner("webapi/admin/news/")));
 
     function newsDataExtractor(data){
-        var img = '<img src="img/cross.png" width="20" height="20"> Delete';
-        return [data.name, data.description, convertMillisecondsToDate(data.from_date), convertMillisecondsToDate(data.to_date), img, data.id];
+        return [data.name, data.description, convertMillisecondsToDate(data.from_date), convertMillisecondsToDate(data.to_date), getDelete(), data.id];
     }
 
     fillTable('webapi/news', news_table, newsDataExtractor);
@@ -114,6 +110,7 @@ $(document).ready(function(){
             data: JSON.stringify(data),
             error: function (e){
                 if(e.status === 200){
+                    console.log(JSON.parse(e.responseText));
                     news_table.row(editing_news_row).data(newsDataExtractor(JSON.parse(e.responseText))).draw();
                     $('#edit_news').hide();
                 }

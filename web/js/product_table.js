@@ -68,7 +68,7 @@ $(document).ready(function(){
     
     function productSuccessor(table){
         return function(data){
-            table.row.add([data.name, data.description, data.price, data.image_link, "", data.id]).draw();
+            table.row.add(productDataExtractor(data)).draw();
             $('#product_name').val("");
             $('#product_description').val("");
             $('#product_price').val("");

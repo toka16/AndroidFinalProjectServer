@@ -53,6 +53,7 @@ public class ProductManager {
         Product pro = findProduct(product.name);
         if(pro != null)
             return false;
+        product.id = products.size()+1;
         
         version++;
         return products.add(product);

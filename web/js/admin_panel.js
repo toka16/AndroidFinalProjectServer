@@ -15,7 +15,6 @@ function logout(){
 }
 
 $(document).ready(function(){
-    
     var hash = window.location.hash;
     if(hash === ""){
         $('.tabs .tab-links').children().first().addClass('active');

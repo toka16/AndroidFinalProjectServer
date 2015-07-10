@@ -80,7 +80,7 @@ public class admin {
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
         if(ProductManager.getInstance().addProduct(product))
-            return Response.ok().build();
+            return Response.ok(product).build();
         
         return Response.status(Response.Status.CONFLICT).entity("'" + product.name + "' is already in use").build();
     }
@@ -132,7 +132,7 @@ public class admin {
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
         if(MenuManager.getInstance().addMenu(menu))
-            return Response.ok().build();
+            return Response.ok(menu).build();
         
         return Response.status(Response.Status.CONFLICT).entity("'" + menu.name + "' is already in use").build();
     }
@@ -185,7 +185,7 @@ public class admin {
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
         if(NewsManager.getInstance().addNews(news))
-            return Response.ok().build();
+            return Response.ok(news).build();
         
         return Response.status(Response.Status.CONFLICT).entity("'" + news.name + "' is already in use").build();
     }
@@ -237,7 +237,7 @@ public class admin {
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
         if(CategoryManager.getInstance().addCategory(category))
-            return Response.ok().build();
+            return Response.ok(category).build();
         
         return Response.status(Response.Status.CONFLICT).entity("'" + category.name + "' is already in use").build();
     }
