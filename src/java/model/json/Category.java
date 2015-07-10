@@ -20,8 +20,7 @@ public class Category {
     @XmlElement
     public String name;
     
-    @XmlElement
-    public String[] products;
+    public Product[] products;
     
     public Category(){}
     public Category(String name){
