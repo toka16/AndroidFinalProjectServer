@@ -4,6 +4,36 @@
  * and open the template in the editor.
  */
 
+function remove_menu_product(){
+    var productID = $('#remove_menu_products').val();
+    var productName = $('#remove_menu_products option:selected').text();
+    $.ajax({
+        url: 'webapi/menu/'+$('#edit_menu_id').val()+"/remove_product/"+productID,
+        type: 'DELETE',
+        success: function(){
+            $('#remove_menu_products [value="' + productID + '"]').remove();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert("Can't remove product, refresh page");
+        }
+    });
+}
+
+function add_menu_product(){
+    var productID = $('#add_menu_products').val();
+    var productName = $('#add_menu_products option:selected').text();
+    $.ajax({
+        url: 'webapi/menu/'+$('#edit_menu_id').val()+"/add_product/"+productID,
+        type: 'POST',
+        success: function(){
+            selectAppend('#remove_menu_products', productID, productName);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert("Can't add product, refresh page");
+        }
+    });
+}
+
 
 $(document).ready(function(){
     function menuRowDesigner(url){
@@ -26,15 +56,6 @@ $(document).ready(function(){
         };
     }
 
-    function menuFieldLengthChecker(row, data){
-        for(var i=0; i<3; i++){
-            if(data[i].length > 40){
-                $('td', row).eq(i).html(data[1].substring(0, 40)+'...');
-            }
-            $('td', row).eq(i).attr('title', data[i]);
-        }
-    }    
-    
     function menuDataCollectior(){
         var data = {};
         data.name = $('#menu_name').val();
@@ -58,13 +79,7 @@ $(document).ready(function(){
     }
     
     function menuDataExtractor(data){
-        function getImg(src){
-            return '<img src="' + src + '" width="50" height="50">';
-        }
-        function getDelete(){
-            return '<img src="img/cross.png" width="20" height="20"> Delete';
-        }
-        return [data.name, data.description, data.price, data.image_link ? getImg(data.image_link) : "", getDelete(), data.id];
+        return [data.name, data.description, data.price, getImg(data.image_link), getDelete(), data.id];
     }
 
     window.menu_table = initTable('#menus', [
@@ -73,7 +88,7 @@ $(document).ready(function(){
             {"width" : "15", "targets" : 2},
             {"width" : "20", "targets" : 3},
             {"width" : "5", "targets" : 4}
-        ], tableRowCreated("menu_table", menuFieldLengthChecker, menuRowDesigner("webapi/admin/menu/")));
+        ], tableRowCreated("menu_table",  menuRowDesigner("webapi/admin/menu/")));
 
 
     fillTable('webapi/menu', menu_table, menuDataExtractor);
@@ -81,6 +96,24 @@ $(document).ready(function(){
     submitListener('#new_menu', 'webapi/admin/menu', menuDataCollectior, menuSuccessor(menu_table));
     
     $('#menus').on('click', 'tbody tr', function(e){
+        if(window.editing_menu_row === this)
+            return;
+        $.ajax({
+            url: 'webapi/menu/'+$("td", this).eq(5).html()+"/containing_products",
+            type: "GET",
+            success: function(data){
+                if(data.length === 0){
+                    selectAppend('#remove_menu_products', 'default', "No Products");
+                }else{
+                    for(var i=0; i<data.length; i++){
+                        selectAppend('#remove_menu_products', data[i].id, data[i].name);
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                selectAppend('#remove_menu_products', 'default', "No Products");
+            }
+        });
         $('#edit_menu_id').val($("td", this).eq(5).html());
         $('#edit_menu_name').val($("td", this).eq(0).html());
         $('#edit_menu_description').val($("td", this).eq(1).html());
@@ -115,4 +148,6 @@ $(document).ready(function(){
             }
         });
     });
+    
+    
 });

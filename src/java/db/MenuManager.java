@@ -7,6 +7,7 @@ package db;
 
 import java.util.ArrayList;
 import model.json.Menu;
+import model.json.Product;
 
 /**
  *
@@ -49,6 +50,15 @@ public class MenuManager {
         Menu[] arr = new Menu[menus.size()];
         return menus.toArray(arr);
     }
+    
+    public Product[] getMenuContainingProducts(int id){
+        Menu menu = findMenu(id);
+        if(menu == null)
+            return null;
+        
+        return ProductManager.getInstance().getProducts();
+    }
+    
     
     public boolean addMenu(Menu menu){
         Menu m = findMenu(menu.name);
@@ -96,5 +106,6 @@ public class MenuManager {
         version++;
         return true;
     }
+
     
 }

@@ -5,13 +5,25 @@
  */
 
 $(document).ready(function(){
+    
+    var hash = window.location.hash;
+    if(hash === ""){
+        $('.tabs .tab-links').children().first().addClass('active');
+        $('.tab').first().addClass('active');
+    }else{
+        $(hash).addClass('active');
+        $('.tabs .tab-links').find('[href="' + hash + '"]').parent().addClass("active");
+    }
+    
     jQuery('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
  
         jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
  
         jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+        
+        window.location = window.location.toString().split('#')[0] + currentAttrValue;
  
         e.preventDefault();
     });
-});       
+});

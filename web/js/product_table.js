@@ -7,12 +7,12 @@
 $(document).ready(function(){
     function productRowDesigner(url){
         return function(row, t){
-            row.eq(4).css("display", "none");
-            row.eq(3).css("cursor", "pointer").click(function(e){
+            row.eq(5).css("display", "none");
+            row.eq(4).css("cursor", "pointer").click(function(e){
                 e.stopPropagation();
                 var tr = $(this).parent();
                 $.ajax({
-                    url: url+row.eq(4).html(),
+                    url: url+row.eq(5).html(),
                     type: "DELETE",
                     success: function () {
                         window[t].row(tr).remove().draw();
@@ -23,45 +23,39 @@ $(document).ready(function(){
                 });
             });
         };
-    }
-
-
-    function productFieldLengthChecker(row, data){
-        for(var i=0; i<2; i++){
-            $('td', row).eq(i).attr('title', data[i]);
-            if(data[i].length > 40){
-                $('td', row).eq(i).html(data[i].substring(0, 40)+'...');
-            }
-        }
-    }    
+    } 
     
     function productDataCollector(){
         var data = {};
         data.name = $('#product_name').val();
         data.description = $('#product_description').val();
         data.price = $('#product_price').val();
+        data.image_link = $('#product_image').val();
         return data;
     }
     
     function productSuccessor(table){
         return function(data){
-            table.row.add([data.name, data.description, data.price, "", data.id]).draw();
+            table.row.add([data.name, data.description, data.price, data.image_link, "", data.id]).draw();
             $('#product_name').val("");
             $('#product_description').val("");
             $('#product_price').val("");
+            $('#product_image').val("");
         };
     }
     
 
     window.product_table = initTable('#products', [
             {"width" : "20%", "targets" : 0},
-            {"width" : "60%", "targets" : 1},
+            {"width" : "40%", "targets" : 1},
             {"width" : "15", "targets" : 2},
-            {"width" : "5", "targets" : 3}
-        ], tableRowCreated("product_table", productFieldLengthChecker, productRowDesigner("webapi/admin/product/")));
+            {"width" : "20", "targets" : 3},
+            {"width" : "5", "targets" : 4}
+        ], tableRowCreated("product_table", productRowDesigner("webapi/admin/product/")));
 
     function productDataExtractor(data){
-        return [data.name, data.description, data.price, '<img src="img/cross.png" width="20" height="20"> Delete', data.id];
+        selectAppend('#add_menu_products', data.id, data.name);
+        return [data.name, data.description, data.price, getImg(data.image_link), getDelete(), data.id];
     }
 
     fillTable('webapi/product', product_table, productDataExtractor);
@@ -70,10 +64,11 @@ $(document).ready(function(){
     
     
     $('#products').on('click', 'tbody tr', function(e){
-        $('#edit_product_id').val($("td", this).eq(4).html());
+        $('#edit_product_id').val($("td", this).eq(5).html());
         $('#edit_product_name').val($("td", this).eq(0).html());
         $('#edit_product_description').val($("td", this).eq(1).html());
         $('#edit_product_price').val($("td", this).eq(2).html());
+        $('#edit_product_image').val($("td", this).eq(3).find("img").attr("src")).change();
         $('#edit_product').show();
         window.editing_product_row = this;
     });
@@ -85,6 +80,7 @@ $(document).ready(function(){
         data.name = $('#edit_product_name').val();
         data.description = $('#edit_product_description').val();
         data.price = $('#edit_product_price').val();
+        data.image_link = $('#edit_product_image').val();
         $.ajax({
             headers: { 
                 'Accept': 'application/json',

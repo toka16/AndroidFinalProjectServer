@@ -13,9 +13,8 @@ function initTable(id, defs, rowCreated){
     return table;
 }
 
-function tableRowCreated(t, fieldLengthChecker, rowDesigner){
-    return function(row, data){
-        fieldLengthChecker(row, data);
+function tableRowCreated(t, rowDesigner){
+    return function(row){
         rowDesigner($('td', row), t);
     };
 }
@@ -64,9 +63,14 @@ function submitListener(id, url, dataCollector, successor){
     });
 }
 
+function selectAppend(id, value, label){
+    $(id).append('<option value="' + value + '">' + label + '</option>');
+}
 
-function getStringLength_px(text){
-    var span = document.createElement("span");
-    span.innerHTML = text;
-    return $(span).width();
+function getImg(src){
+    return '<img src="' + (src ? src : '') + '" width="50" height="50">';
+}
+
+function getDelete(){
+    return '<img src="img/cross.png" width="20" height="20"> Delete';
 }

@@ -29,8 +29,7 @@ public class Menu {
     @XmlElement
     public String image_link;
     
-    @XmlElement
-    public String[] products;
+    public Product[] products;
     
     public Menu(){}
     

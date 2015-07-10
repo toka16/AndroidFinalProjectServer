@@ -26,6 +26,9 @@ public class Product {
     @XmlElement
     public double price;
     
+    @XmlElement
+    public String image_link;
+    
     public Product(){}
     
     public Product(int id, String name, String desc, double price){

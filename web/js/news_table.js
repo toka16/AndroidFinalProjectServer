@@ -32,16 +32,6 @@ $(document).ready(function(){
             });
         };
     }
-
-
-    function newsFieldLengthChecker(row, data){
-        for(var i=0; i<2; i++){
-            $('td', row).eq(i).attr('title', data[i]);
-            if(data[i].length > 40){
-                $('td', row).eq(i).html(data[i].substring(0, 40)+'...');
-            }
-        }
-    }
    
     
     function newsDataCollectior(){
@@ -83,7 +73,7 @@ $(document).ready(function(){
             {"width" : "10", "targets" : 2},
             {"width" : "10", "targets" : 3},
             {"width" : "5", "targets" : 4}
-        ], tableRowCreated("news_table", newsFieldLengthChecker, newsRowDesigner("webapi/admin/news/")));
+        ], tableRowCreated("news_table", newsRowDesigner("webapi/admin/news/")));
 
     function newsDataExtractor(data){
         var img = '<img src="img/cross.png" width="20" height="20"> Delete';

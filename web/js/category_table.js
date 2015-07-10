@@ -26,14 +26,6 @@ $(document).ready(function () {
         };
     }
 
-
-    function categoryFieldLengthChecker(row, data) {
-        $('td', row).eq(0).attr('title', data[0]);
-        if (data[0].length > 40) {
-            $('td', row).eq(0).html(data[0].substring(0, 40) + '...');
-        }
-    }
-
     function categoryDataCollectior() {
         var data = {};
         data.name = $('#category_name').val();
@@ -59,7 +51,7 @@ $(document).ready(function () {
     window.category_table = initTable('#categories', [
         {"width": "90%", "targets": 0},
         {"width": "10%", "targets": 1}
-    ], tableRowCreated("category_table", categoryFieldLengthChecker, categoryRowDesigner("webapi/admin/category/")));
+    ], tableRowCreated("category_table", categoryRowDesigner("webapi/admin/category/")));
 
 
     fillTable('webapi/category', category_table, categoryDataExtractor);

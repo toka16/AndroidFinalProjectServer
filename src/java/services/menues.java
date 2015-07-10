@@ -6,17 +6,24 @@
 package services;
 
 import db.MenuManager;
+import db.ProductManager;
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
+import model.json.Product;
 import model.json.User;
+import model.json.User.Role;
 
 /**
  * REST Web Service
@@ -64,5 +71,50 @@ public class menues {
         }
         
         return Response.status(Response.Status.OK).entity(MenuManager.getInstance().getMenues()).build();
+    }
+    
+    
+    @GET
+    @Path("/{id}/containing_products")
+    public Response getMenuNoncontainingProducts(@PathParam("id") int id, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        
+        return Response.ok(MenuManager.getInstance().getMenuContainingProducts(id)).build();
+    }
+    
+    @DELETE
+    @Path("/{menuID}/remove_product/{productID}")
+    public Response removeMenuProduct(@PathParam("menuID") int menuID, @PathParam("productID") int productID, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        if(user.role != Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+        
+        System.out.println("removing product (" + productID + ") from menu (" + menuID + ")");
+        
+        return Response.ok().build();
+    }
+    
+    @POST
+    @Path("/{menuID}/add_product/{productID}")
+    public Response addMenuProduct(@PathParam("menuID") int menuID, @PathParam("productID") int productID, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        if(user.role != Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+        
+        System.out.println("adding product (" + productID + ") from menu (" + menuID + ")");
+        
+        return Response.ok().build();
     }
 }
