@@ -34,6 +34,7 @@ public class ApplicationConfig extends Application {
         resources.add(services.menues.class);
         resources.add(services.news.class);
         resources.add(services.products.class);
+        resources.add(services.shop.class);
         resources.add(services.users.class);
     }
     

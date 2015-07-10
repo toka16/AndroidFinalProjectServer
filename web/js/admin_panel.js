@@ -4,6 +4,16 @@
  * and open the template in the editor.
  */
 
+function logout(){
+    $.ajax({
+        url: 'webapi/admin/logout',
+        type: 'POST',
+        success: function(){
+            window.location = 'index.html';
+        }
+    });
+}
+
 $(document).ready(function(){
     
     var hash = window.location.hash;

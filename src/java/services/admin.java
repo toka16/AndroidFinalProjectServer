@@ -52,6 +52,7 @@ public class admin {
         if(username.equals("admin") && password.equals("admin")){
             User user = new User();
             user.role = User.Role.ADMIN;
+            user.first_name = "tornike";
             request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
             return Response.ok().build();
         }

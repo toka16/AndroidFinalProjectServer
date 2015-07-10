@@ -4,6 +4,38 @@
  * and open the template in the editor.
  */
 
+function remove_product_category(){
+    var categoryID = $('#remove_product_category').val();
+    var categoryName = $('#remove_product_category option:selected').text();
+    $.ajax({
+        url: 'webapi/category/'+ categoryID +"/remove_product/"+$('#edit_product_id').val(),
+        type: 'DELETE',
+        success: function(){
+            $('#remove_product_category [value="' + categoryID + '"]').remove();
+            selectAppend('#add_product_category', categoryID, categoryName);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert("Can't remove product, refresh page");
+        }
+    });
+}
+
+function add_product_category(){
+    var categoryID = $('#add_product_category').val();
+    var categoryName = $('#add_product_category option:selected').text();
+    $.ajax({
+        url: 'webapi/category/'+ categoryID +"/add_product/"+$('#edit_product_id').val(),
+        type: 'POST',
+        success: function(){
+            $('#add_product_category [value="' + categoryID + '"]').remove();
+            selectAppend('#remove_product_category', categoryID, categoryName);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert("Can't remove product, refresh page");
+        }
+    });
+}
+
 $(document).ready(function(){
     function productRowDesigner(url){
         return function(row, t){
@@ -64,6 +96,38 @@ $(document).ready(function(){
     
     
     $('#products').on('click', 'tbody tr', function(e){
+        $.ajax({
+            url: 'webapi/product/'+$("td", this).eq(5).html()+"/addable_categories",
+            type: 'GET',
+            success: function(data){
+                for(var i=0; i<data.length; i++){
+                    selectAppend('#add_product_category', data[i].id, data[i].name);
+                }
+            },
+            error: function (e, textStatus, errorThrown) {
+                if(e.status === 401)
+                    window.location = 'index.html';
+                if(e.status === 405)
+                    alert("Only Admin can assign Category to Product");
+            }
+        });
+        $.ajax({
+            url: 'webapi/product/'+$("td", this).eq(5).html()+"/removable_categories",
+            type: 'GET',
+            success: function(data){
+                for(var i=0; i<data.length; i++){
+                    selectAppend('#remove_product_category', data[i].id, data[i].name);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if(e.status === 401)
+                    window.location = 'index.html';
+                if(e.status === 405)
+                    alert("Only Admin can remove Product from Category");
+            }
+        });
+        
+        
         $('#edit_product_id').val($("td", this).eq(5).html());
         $('#edit_product_name').val($("td", this).eq(0).html());
         $('#edit_product_description').val($("td", this).eq(1).html());

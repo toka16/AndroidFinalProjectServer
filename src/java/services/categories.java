@@ -10,13 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
 import model.json.User;
+import model.json.User.Role;
 
 /**
  * REST Web Service
@@ -65,5 +69,35 @@ public class categories {
         }
         
         return Response.status(Response.Status.OK).entity(CategoryManager.getInstance().getCategories()).build();
+    }
+    
+    @POST
+    @Path("/{catID}/add_product/{productID}")
+    public Response addCategoryProduct(@PathParam("catID") int categoryID, @PathParam("productID") int productID, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        if(user.role != Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+        
+        System.out.println("add product(" + productID + ") to category (" + categoryID + ")");
+        return Response.ok().build();
+    }
+    
+    @DELETE
+    @Path("/{catID}/remove_product/{productID}")
+    public Response removeCategoryProduct(@PathParam("catID") int categoryID, @PathParam("productID") int productID, @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        if(user.role != Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
+        
+        System.out.println("remove product(" + productID + ") from category (" + categoryID + ")");
+        return Response.ok().build();
     }
 }

@@ -5,6 +5,7 @@
  */
 package services;
 
+import db.CategoryManager;
 import db.ProductManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
@@ -64,4 +66,29 @@ public class products {
         
         return Response.ok(ProductManager.getInstance().getProducts()).build();
     }
+    
+    @GET
+    @Path("/{productID}/addable_categories")
+    public Response getProductCategories(@PathParam("productID") int productID, @Context HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        
+        return Response.ok(CategoryManager.getInstance().getCategories()).build();
+    }
+    
+    @GET
+    @Path("/{productID}/removable_categories")
+    public Response getProductRemovableCategories(@PathParam("productID") int productID, @Context HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null){
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        
+        return Response.ok(CategoryManager.getInstance().getCategories()).build();
+    }
+    
 }
