@@ -74,7 +74,7 @@ public class users {
                             @FormParam("first_name") String firstName,
                             @FormParam("last_name") String lastName,
                             @FormParam("primary_number") String primaryNumber,
-                            @FormParam("mobile_bumber") String mobileNumber,
+                            @FormParam("mobile_number") String mobileNumber,
                             @FormParam("card_number") String cardNumber,
                             @Context HttpServletRequest request) {
         User user = UserManager.getInstance().register(email, password, firstName, lastName, mobileNumber, primaryNumber, cardNumber);
