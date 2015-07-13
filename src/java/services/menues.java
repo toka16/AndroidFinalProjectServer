@@ -56,7 +56,7 @@ public class menues {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        return Response.ok(String.valueOf(MenuManager.getInstance().getVersion())).build();
+        return Response.ok(String.valueOf(ConnectToDB.getVersionNumber(ConnectToDB.VERSION_MENU))).build();
     }
 
     /**
@@ -72,9 +72,8 @@ public class menues {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         
-        System.out.println("get all menus");
         Menu[] menus = ConnectToDB.getMenus();
-        System.out.println("after all");
+
         return Response.status(Response.Status.OK).entity(menus).build();
     }
     
@@ -88,8 +87,9 @@ public class menues {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         
+        Product[] products  = ConnectToDB.allProductsByMenu(id);
         
-        return Response.ok(MenuManager.getInstance().getMenuContainingProducts(id)).build();
+        return Response.ok(products).build();
     }
     
     @DELETE
@@ -103,6 +103,7 @@ public class menues {
         if(user.role != Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
         
+        ConnectToDB.deleteProductFromMenu(menuID, productID);
         System.out.println("removing product (" + productID + ") from menu (" + menuID + ")");
         
         return Response.ok().build();
@@ -119,6 +120,7 @@ public class menues {
         if(user.role != Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
         
+        ConnectToDB.fillMapMenuProduct(menuID, productID);
         System.out.println("adding product (" + productID + ") from menu (" + menuID + ")");
         
         return Response.ok().build();

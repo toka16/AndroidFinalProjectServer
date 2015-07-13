@@ -54,7 +54,7 @@ public class categories {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        return Response.ok(String.valueOf(CategoryManager.getInstance().getVersion())).build();
+        return Response.ok(String.valueOf(ConnectToDB.getVersionNumber(ConnectToDB.VERSION_CATEGORY))).build();
     }
 
     /**
@@ -69,9 +69,9 @@ public class categories {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        System.out.println("get all categories");
+        
         Category[] categories = ConnectToDB.getCategories();
-        System.out.println("after all");
+
         return Response.status(Response.Status.OK).entity(categories).build();
     }
     
@@ -86,7 +86,7 @@ public class categories {
         if(user.role != Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
         
-        
+        ConnectToDB.fillMapCategoryProduct(categoryID, productID);
         System.out.println("add product(" + productID + ") to category (" + categoryID + ")");
         
         return Response.ok().build();
@@ -103,6 +103,7 @@ public class categories {
         if(user.role != Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
         
+        ConnectToDB.deleteProductFromCategory(categoryID, productID);
         System.out.println("remove product(" + productID + ") from category (" + categoryID + ")");
         return Response.ok().build();
     }

@@ -159,7 +159,7 @@ END $$
 -- Note: The procedure updates product by product id.
 -- --------------------------------------------------------------------------------
 DELIMITER $$
-
+DROP PROCEDURE IF EXISTS `update_product` $$
 CREATE PROCEDURE `android_final_project`.`update_product` (poductID int, productName nvarchar(32), productDescription text,
 															productPrice double, productImageLink text)
 BEGIN
@@ -315,7 +315,7 @@ CREATE PROCEDURE `select_categories_by_product` (productID int)
 BEGIN
 
 	select category_id, category_name from
-	categories inner join map_category_product
+	categories left join map_category_product
 	on category_id = id_of_category
 	where id_of_product = productID;
 
@@ -328,9 +328,9 @@ CREATE PROCEDURE `select_categories_out_of_product` (productID int)
 BEGIN
 
 	select category_id, category_name from
-	categories inner join map_category_product
+	categories left join map_category_product
 	on category_id = id_of_category
-	where id_of_product != productID
+	where id_of_product != productID or id_of_product is null
 	group by category_id;
 
 END $$
@@ -340,7 +340,7 @@ DROP PROCEDURE IF EXISTS `select_produts` $$
 CREATE PROCEDURE `android_final_project`.`select_produts` ()
 BEGIN
 	select * from products;
-END
+END $$
 
 #  deletes:
 

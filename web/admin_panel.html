@@ -43,7 +43,7 @@ and open the template in the editor.
                                 <p><input id="edit_product_id" type="text" style="display: none"></p>
                                 <p><input id="edit_product_name" type="text" placeholder="Product Name" required></p>
                                 <p><textarea id="edit_product_description" rows="3" cols="100" placeholder="Product Description" required></textarea></p>
-                                <p><input id="edit_product_price" placeholder="Produec Price" type="number"></p>
+                                <p><input id="edit_product_price" placeholder="Produec Price" type="number" step="0.01" min="0.01" required></p>
                                 <p>
                                     <input type="text" placeholder="Product Image" id="edit_product_image" onchange="$('#edit_product_image_view').attr('src', $(this).val())">
                                     <img id="edit_product_image_view" alt="Product Image" src="" width="100" height="100">

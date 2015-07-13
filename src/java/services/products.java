@@ -19,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
+import model.json.Category;
 import model.json.Product;
 import model.json.User;
 
@@ -51,7 +52,7 @@ public class products {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        return Response.ok(String.valueOf(ProductManager.getInstance().getVersion())).build();
+        return Response.ok(String.valueOf(ConnectToDB.getVersionNumber(ConnectToDB.VERSION_PRODUCT))).build();
     }
 
     /**
@@ -66,7 +67,8 @@ public class products {
         if(user == null)
             return Response.status(Response.Status.UNAUTHORIZED).build();
 
-        Product[] products = ConnectToDB.allProductsOutOfCategory(-1);
+        Product[] products = ConnectToDB.allProducts();
+        System.out.println("products: "+products);
 
         return Response.ok(products).build();
     }
@@ -80,7 +82,9 @@ public class products {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         
-        return Response.ok(CategoryManager.getInstance().getCategories()).build();
+        Category[] categories = ConnectToDB.allCategoriesOutOfProduct(productID);
+        
+        return Response.ok(categories).build();
     }
     
     @GET
@@ -92,7 +96,9 @@ public class products {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         
-        return Response.ok(CategoryManager.getInstance().getCategories()).build();
+        Category[] categories = ConnectToDB.allCategoriesByProduct(productID);
+        
+        return Response.ok(categories).build();
     }
     
 }

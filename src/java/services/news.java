@@ -53,7 +53,7 @@ public class news {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        return Response.ok(String.valueOf(NewsManager.getInstance().getVersion())).build();
+        return Response.ok(String.valueOf(ConnectToDB.getVersionNumber(ConnectToDB.VERSION_NEWS))).build();
     }
 
     /**
@@ -68,9 +68,7 @@ public class news {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        System.out.println("get all news");
         News[] news = ConnectToDB.getNews();
-        System.out.println("after all");
         return Response.status(Response.Status.OK).entity(news).build();
     }
 }

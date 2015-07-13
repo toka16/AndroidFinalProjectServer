@@ -27,6 +27,11 @@ import model.json.User;
  */
 public class ConnectToDB {
     
+    public static final String VERSION_PRODUCT = "product";
+    public static final String VERSION_MENU = "menu";
+    public static final String VERSION_NEWS = "news";
+    public static final String VERSION_CATEGORY = "category";
+    
     private static final ConnectionPoolToDB connectionPool = new ConnectionPoolToDB(DBInfo.DRIVER_CLASS_NAME, 
                                                 DBInfo.DB_SERVER_URL, DBInfo.DB_USER_NAME, DBInfo.DB_PASSWORD);
     
@@ -117,9 +122,9 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
             
-            for(int product: category.products){
-                fillMapCategoryProduct(category.id, product);
-            }
+//            for(int product: category.products){
+//                fillMapCategoryProduct(category.id, product);
+//            }
         } catch (SQLException ex) {
             result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
@@ -236,7 +241,7 @@ public class ConnectToDB {
      * The method updates product entry.
      * @param product 
      */
-    public static void updateProduct(Product product){
+    public static boolean updateProduct(Product product){
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call update_product(?, ?, ?, ?, ?)");
@@ -250,8 +255,10 @@ public class ConnectToDB {
             stmt.execute();
             connectionPool.returnConnection(connection);
             stmt.close();
+            return true;
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
@@ -259,7 +266,7 @@ public class ConnectToDB {
      * The method updates menu entry.
      * @param menu 
      */
-    public static void updateMenu(Menu menu){
+    public static boolean updateMenu(Menu menu){
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call update_menu(?, ?, ?, ?, ?)");
@@ -273,8 +280,10 @@ public class ConnectToDB {
             stmt.execute();
             connectionPool.returnConnection(connection);
             stmt.close();
+            return true;
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
@@ -282,7 +291,7 @@ public class ConnectToDB {
      * The method updates category entry.
      * @param category 
      */
-    public static void updateCategory(Category category){
+    public static boolean updateCategory(Category category){
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call update_category(?, ?)");
@@ -298,8 +307,10 @@ public class ConnectToDB {
 //            for(int product: category.products){
 //                fillMapCategoryProduct(category.id, product);
 //            }
+            return true;
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
@@ -307,7 +318,7 @@ public class ConnectToDB {
      * The method updates news.
      * @param news
      */
-    public static void updateNews(News news){
+    public static boolean updateNews(News news){
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call update_news(?, ?, ?, ? ,?)");
@@ -321,8 +332,10 @@ public class ConnectToDB {
             stmt.execute();
             connectionPool.returnConnection(connection);
             stmt.close();
+            return true;
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     

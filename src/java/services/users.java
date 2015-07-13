@@ -92,7 +92,9 @@ public class users {
         user.card_number = cardNumber;
         user.primary_number = primaryNumber;
         user.role = Role.USER;
-        ConnectToDB.insertNewUser(user);
+        if(!ConnectToDB.insertNewUser(user)){
+            return Response.status(Status.CONFLICT).build();
+        }
         
         HttpSession session = request.getSession();
         session.setAttribute(Constants.SESSION_USER_KEY, user);

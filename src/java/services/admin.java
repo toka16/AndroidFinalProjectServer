@@ -50,11 +50,11 @@ public class admin {
     @Path("/login")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response login(@FormParam("username") String username, @FormParam("password") String password, @Context HttpServletRequest request){
-//        User user = ConnectToDB.getUser(username, password);
-//        if(user == null || user.role != User.Role.ADMIN)
-//            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Invalide Username or Password").build();
-        User user = new User();
-        user.role = User.Role.ADMIN;
+        System.out.println(username+":"+password);
+        User user = ConnectToDB.getUser(username, password);
+        System.out.println("user:"+user);
+        if(user == null || user.role != User.Role.ADMIN)
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Invalide Username or Password").build();
         
         request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
 
@@ -89,7 +89,9 @@ public class admin {
         new_user.card_number = cardNumber;
         new_user.primary_number = primaryNumber;
         new_user.role = User.Role.valueOf(role);
-        ConnectToDB.insertNewUser(new_user);
+        if(!ConnectToDB.insertNewUser(new_user)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         System.out.println("new user: "+new_user+", role: "+role);
         
         return Response.ok().build();
@@ -117,9 +119,10 @@ public class admin {
         
         if(!validateProduct(product))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
-        System.out.println("new product: "+product);
-        ConnectToDB.insertNewProduct(product);
-        System.out.println("product added: "+product);
+        
+        if(!ConnectToDB.insertNewProduct(product)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         
         return Response.ok(product).build();
     }
@@ -137,8 +140,10 @@ public class admin {
         if(!validateProduct(product))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        System.out.println("inserting product");
-        ConnectToDB.updateProduct(product);
+        System.out.println("update product: "+product);
+        if(!ConnectToDB.updateProduct(product)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         System.out.println("after insert");
         return Response.ok(product).build();        
     }
@@ -170,7 +175,9 @@ public class admin {
         if(!validateMenu(menu))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         menu.products = new int[0];
-        ConnectToDB.insertNewMenu(menu);
+        if(!ConnectToDB.insertNewMenu(menu)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         return Response.ok(menu).build();
     }
     
@@ -187,7 +194,9 @@ public class admin {
         if(!validateMenu(menu))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        ConnectToDB.updateMenu(menu);
+        if(!ConnectToDB.updateMenu(menu)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         return Response.ok(menu).build();        
     }
     
@@ -219,7 +228,9 @@ public class admin {
         if(!validateNews(news))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        ConnectToDB.insertNews(news);
+        if(ConnectToDB.insertNews(news)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         return Response.ok(news).build();
     }
     
@@ -236,7 +247,9 @@ public class admin {
         if(!validateNews(news))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        ConnectToDB.updateNews(news);
+        if(!ConnectToDB.updateNews(news)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         return Response.ok(news).build();
     }
     
@@ -266,7 +279,6 @@ public class admin {
         
         if(!validateCategory(category))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
-        category.products = new int[0];
         ConnectToDB.insertNewCategory(category);
         return Response.ok(category).build();
     }
@@ -284,7 +296,9 @@ public class admin {
         if(!validateCategory(category))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        ConnectToDB.updateCategory(category);
+        if(!ConnectToDB.updateCategory(category)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         return Response.ok(category).build();
     }
     
