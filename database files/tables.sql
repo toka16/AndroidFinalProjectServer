@@ -2,6 +2,16 @@
 
 use android_final_project;
 
+drop table if exists versions;
+create table versions(
+	version_id integer unsigned primary key auto_increment,
+	version_item_name nvarchar(32),
+	version_number int
+);
+
+insert into versions(version_item_name, version_number)
+values ('product', 1), ('category', 1), ('menu', 1), ('news', 1);
+
 drop table if exists users;
 create table users(
 	user_id integer unsigned primary key auto_increment,
@@ -11,7 +21,8 @@ create table users(
 	user_password text,
 	user_phone varchar(32),
 	user_card_number text,
-	user_primary_number text
+	user_primary_number text,
+	user_is_admin int
 );
 
 drop table if exists categories;

@@ -23,4 +23,13 @@ BEGIN
 	declare productID int;
 	set productID = (select product_id from products where product_name = productName);
 	RETURN productID is not null;
-END
+END $$
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS `get_version_number` $$
+CREATE FUNCTION `android_final_project`.`get_version_number` (itemName nvarchar(32))
+RETURNS INTEGER
+BEGIN
+
+RETURN (select version_number from versions where version_item_name = itemName);
+END $$
