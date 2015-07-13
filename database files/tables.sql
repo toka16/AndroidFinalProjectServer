@@ -7,8 +7,8 @@ create table users(
 	user_id integer unsigned primary key auto_increment,
 	user_name nvarchar(32),
 	user_surname nvarchar(32),
-	user_email varchar(32) unique,
-	user_password varchar(16),
+	user_email varchar(128) unique,
+	user_password text,
 	user_phone varchar(32),
 	user_card_number text,
 	user_primary_number text
@@ -33,5 +33,31 @@ drop table if exists map_category_product;
 create table map_category_product(
 	id integer unsigned primary key auto_increment,
 	id_of_category int,
+	id_of_product int,
+	constraint categories_unique unique(id_of_category, id_of_product)
+);
+
+drop table if exists menus;
+create table menus(
+	menu_id integer unsigned primary key auto_increment,
+	menu_name nvarchar(32) unique,
+	description text,
+	price double,
+	image_link text
+);
+
+drop table if exists map_menu_product;
+create table map_menu_product(
+	id integer unsigned primary key auto_increment,
+	id_of_menu int,
 	id_of_product int
+);
+
+drop table if exists news;
+create table news(
+	id integer unsigned primary key auto_increment,
+	news_name nvarchar(32),
+	description text,
+	from_date long,
+	to_date long
 );
