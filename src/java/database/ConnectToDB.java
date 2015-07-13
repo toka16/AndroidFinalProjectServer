@@ -27,7 +27,7 @@ import model.json.User;
  */
 public class ConnectToDB {
     
-    private static ConnectionPoolToDB connectionPool = new ConnectionPoolToDB(DBInfo.DRIVER_CLASS_NAME, 
+    private static final ConnectionPoolToDB connectionPool = new ConnectionPoolToDB(DBInfo.DRIVER_CLASS_NAME, 
                                                 DBInfo.DB_SERVER_URL, DBInfo.DB_USER_NAME, DBInfo.DB_PASSWORD);
     
     // Inserts:
@@ -59,7 +59,7 @@ public class ConnectToDB {
             stmt.close();
         } catch (SQLException ex) {
             result = false;
-//            ex.printStackTrace();
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return result;
@@ -71,8 +71,10 @@ public class ConnectToDB {
      * this is another functionality and may thread manager stops current thread at this time and start other product 
      * saving thread. After the old thread continues. So numeric of id will not be correct.
      * @param product 
+     * @return 
      */
-    public static synchronized void insertNewProduct(Product product){
+    public static synchronized boolean insertNewProduct(Product product){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call insert_product(?, ?, ?, ?, ?)");
@@ -89,15 +91,19 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
         } catch (SQLException ex) {
+            result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return result;
     }
     
     /**
      * The method adds new category into database.
      * @param category 
+     * @return
      */
-    public static synchronized  void insertNewCategory(Category category){
+    public static synchronized  boolean insertNewCategory(Category category){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call insert_category(?, ?)");
@@ -115,16 +121,20 @@ public class ConnectToDB {
                 fillMapCategoryProduct(category.id, product.id);
             }
         } catch (SQLException ex) {
+            result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return result;
     }
     
     
     /**
      * The method adds new menu into database.
      * @param menu 
+     * @return
      */
-    public static synchronized void insertNewMenu(Menu menu){
+    public static synchronized boolean insertNewMenu(Menu menu){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call insert_menu(?, ?, ?, ?, ?)");
@@ -145,12 +155,15 @@ public class ConnectToDB {
                 fillMapMenuProduct(menu.id, product.id);
             }
         } catch (SQLException ex) {
+            result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return result;
     }
     
     // The method makes connection between category id and product id.
-    public static void fillMapCategoryProduct(int categoryID, int productID){
+    public static boolean fillMapCategoryProduct(int categoryID, int productID){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call fill_map_category_product(?, ?)");
@@ -162,12 +175,15 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
         } catch (SQLException ex) {
+            result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return result;
     }
     
     // The method makes connection between menu id and product id.
-    public static void fillMapMenuProduct(int menuID, int productID){
+    public static boolean fillMapMenuProduct(int menuID, int productID){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call fill_map_menu_product(?, ?)");
@@ -179,16 +195,19 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
         } catch (SQLException ex) {
+            result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        return result;
     }
     
     /**
      * The method inserts news into database.
-     * @param news 
+     * @param news
+     * @return
      */
-    public static void insertNews(News news){
+    public static boolean insertNews(News news){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call insert_news(?, ?, ?, ?, ?)");
@@ -205,8 +224,10 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
         } catch (SQLException ex) {
+            result = false;
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return result;
     }
     
     // Updates:
