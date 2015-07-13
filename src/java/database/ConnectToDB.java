@@ -103,8 +103,8 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
             
-            for(Product product: category.products){
-                fillMapCategoryProduct(category.id, product.id);
+            for(int product: category.products){
+                fillMapCategoryProduct(category.id, product);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,8 +133,8 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
             
-            for(Product product: menu.products){
-                fillMapMenuProduct(menu.id, product.id);
+            for(int product: menu.products){
+                fillMapMenuProduct(menu.id, product);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
@@ -266,9 +266,9 @@ public class ConnectToDB {
             connectionPool.returnConnection(connection);
             stmt.close();
             
-            for(Product product: category.products){
-                fillMapCategoryProduct(category.id, product.id);
-            }
+//            for(int product: category.products){
+//                fillMapCategoryProduct(category.id, product);
+//            }
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -350,7 +350,7 @@ public class ConnectToDB {
         return productsList.toArray(new Product[productsList.size()]);
     }
     
-    private static void fillProductsList(ResultSet set, List<Product> products) throws SQLException{
+    public static void fillProductsList(ResultSet set, List<Product> products) throws SQLException{
         while(set.next()){
             int id = set.getInt(1);
             String name = set.getString(2);
@@ -431,7 +431,7 @@ public class ConnectToDB {
         stmt.setInt(1, category.id);
         
         ResultSet categoryProductSet = stmt.executeQuery();
-        List<Product> productsList = new ArrayList<>();
+        List<Integer> productsList = new ArrayList<>();
         
         while(categoryProductSet.next()){
             Product product = new Product();
@@ -441,10 +441,12 @@ public class ConnectToDB {
             product.price = categoryProductSet.getDouble(4);
             product.image_link = categoryProductSet.getString(5);
 
-            productsList.add(product);
+            productsList.add(product.id);
         }
-
-        category.products = productsList.toArray(new Product[productsList.size()]);
+        category.products = new int[productsList.size()];
+        for(int i=0; i<productsList.size(); i++)
+            category.products[i] = productsList.get(i);
+            
     }
     
     
@@ -487,6 +489,7 @@ public class ConnectToDB {
                 menu.name = menusInfoSet.getString(2);
                 menu.description = menusInfoSet.getString(3);
                 menu.price = menusInfoSet.getDouble(4);
+                menu.image_link = menusInfoSet.getString(5);
                 
                 fillMenuByProducts(menu);
                 menus.add(menu);
@@ -519,7 +522,10 @@ public class ConnectToDB {
 
             productsList.add(product);
         }
-        menu.products = productsList.toArray(new Product[productsList.size()]);
+        
+        menu.products = new int[productsList.size()];
+        for(int i=0; i<productsList.size(); i++)
+            menu.products[i] = productsList.get(i).id;
 
         connectionPool.returnConnection(connection);
         stmt.close();

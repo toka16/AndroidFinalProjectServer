@@ -35,4 +35,21 @@ $(document).ready(function(){
  
         e.preventDefault();
     });
+    
+    $('#new_user_form').submit(function (e){
+        e.preventDefault();
+        var data = $(this).serialize();
+        $.ajax({
+            url: 'webapi/admin/register',
+            type: 'POST',
+            data: data,
+            success: function(data){
+                $('#new_user_form').find('input').val('').last().val('Add User');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("Couldn't add new User");
+                console.log('error: '+jqXHR);
+            }
+        });
+    });
 });

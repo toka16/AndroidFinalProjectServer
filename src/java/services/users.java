@@ -5,8 +5,9 @@
  */
 package services;
 
-import db.UserManager;
+import database.ConnectToDB;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import model.Constants;
 import model.json.User;
+import model.json.User.Role;
 
 /**
  * REST Web Service
@@ -45,12 +47,15 @@ public class users {
     @POST
     @Path("/login")
     public Response login(@FormParam("email") String email, @FormParam("password") String password, @Context HttpServletRequest request) {
-        User user = UserManager.getInstance().login(email, password);
+        User user = ConnectToDB.getUser(email, password);
         if(user == null){
             return Response.status(Status.NOT_ACCEPTABLE).entity("Invalide username or password").build();
         }
         
-        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+        HttpSession session = request.getSession();
+        session.setAttribute(Constants.SESSION_USER_KEY, user);
+        session.setMaxInactiveInterval(60*60*24*30);   // 30 days
+        
         return Response.status(Status.OK).build();
         
     }
@@ -77,11 +82,22 @@ public class users {
                             @FormParam("mobile_number") String mobileNumber,
                             @FormParam("card_number") String cardNumber,
                             @Context HttpServletRequest request) {
-        User user = UserManager.getInstance().register(email, password, firstName, lastName, mobileNumber, primaryNumber, cardNumber);
-        if(user == null){
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+        
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.first_name = firstName;
+        user.last_name = lastName;
+        user.mobile_number = mobileNumber;
+        user.card_number = cardNumber;
+        user.primary_number = primaryNumber;
+        user.role = Role.USER;
+        ConnectToDB.insertNewUser(user);
+        
+        HttpSession session = request.getSession();
+        session.setAttribute(Constants.SESSION_USER_KEY, user);
+        session.setMaxInactiveInterval(60*60*24*30);   // 30 days
+        
         return Response.status(Status.OK).build();
     }
     

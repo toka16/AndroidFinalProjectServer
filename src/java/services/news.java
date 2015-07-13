@@ -5,6 +5,7 @@
  */
 package services;
 
+import database.ConnectToDB;
 import db.NewsManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
+import model.json.News;
 import model.json.User;
 
 /**
@@ -60,13 +62,15 @@ public class news {
      * @return an HTTP response with content of the updated or created resource.
      */
     @GET
-    public Response getMenues(@Context HttpServletRequest request) {
+    public Response getNews(@Context HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        
-        return Response.status(Response.Status.OK).entity(NewsManager.getInstance().getNews()).build();
+        System.out.println("get all news");
+        News[] news = ConnectToDB.getNews();
+        System.out.println("after all");
+        return Response.status(Response.Status.OK).entity(news).build();
     }
 }

@@ -5,6 +5,7 @@
  */
 package services;
 
+import database.ConnectToDB;
 import db.CategoryManager;
 import db.ProductManager;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
+import model.json.Product;
 import model.json.User;
 
 /**
@@ -63,8 +65,10 @@ public class products {
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null)
             return Response.status(Response.Status.UNAUTHORIZED).build();
-        
-        return Response.ok(ProductManager.getInstance().getProducts()).build();
+
+        Product[] products = ConnectToDB.allProductsOutOfCategory(-1);
+
+        return Response.ok(products).build();
     }
     
     @GET

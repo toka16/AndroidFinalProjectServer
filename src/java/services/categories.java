@@ -5,6 +5,7 @@
  */
 package services;
 
+import database.ConnectToDB;
 import db.CategoryManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
+import model.json.Category;
 import model.json.User;
 import model.json.User.Role;
 
@@ -67,8 +69,10 @@ public class categories {
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        
-        return Response.status(Response.Status.OK).entity(CategoryManager.getInstance().getCategories()).build();
+        System.out.println("get all categories");
+        Category[] categories = ConnectToDB.getCategories();
+        System.out.println("after all");
+        return Response.status(Response.Status.OK).entity(categories).build();
     }
     
     @POST
@@ -82,7 +86,9 @@ public class categories {
         if(user.role != Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
         
+        
         System.out.println("add product(" + productID + ") to category (" + categoryID + ")");
+        
         return Response.ok().build();
     }
     

@@ -29,9 +29,6 @@ import model.json.User;
 @Produces(MediaType.APPLICATION_JSON)
 public class shop {
 
-    @Context
-    private UriInfo context;
-
     /**
      * Creates a new instance of shop
      */

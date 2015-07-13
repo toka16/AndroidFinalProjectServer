@@ -62,7 +62,7 @@ $(document).ready(function(){
         data.name = $('#product_name').val();
         data.description = $('#product_description').val();
         data.price = $('#product_price').val();
-        data.image_link = $('#product_image').val();
+        data.image_link = $('#new_product_image').val();
         return data;
     }
     
@@ -72,7 +72,7 @@ $(document).ready(function(){
             $('#product_name').val("");
             $('#product_description').val("");
             $('#product_price').val("");
-            $('#product_image').val("");
+            $('#new_product_image').val("");
         };
     }
     

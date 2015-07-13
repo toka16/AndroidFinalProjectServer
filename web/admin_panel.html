@@ -30,6 +30,7 @@ and open the template in the editor.
                 <li><a href="#tab2">Menus</a></li>
                 <li><a href="#tab3">News</a></li>
                 <li><a href="#tab4">Categories</a></li>
+                <li><a href="#tab5">Users</a></li>
                 <li style="float: right"><a href="#" onclick="logout()">Log Out</a></li>
             </ul>
 
@@ -249,6 +250,27 @@ and open the template in the editor.
                         <form id="new_category" action="#">
                             <input type="text" id="category_name" placeholder="Category Name" required/>
                             <input type="submit" value="Add">
+                        </form>
+                    </fieldset>
+                </div>
+                <div id="tab5" class="tab">
+                    <fieldset>
+                        <legend>New User</legend>
+                        <form action="#" id="new_user_form">
+                            <p><input type="email" name="email" placeholder="Email" required></p>
+                            <p><input type="password" name="password" placeholder="Password" required></p>
+                            <p><input type="text" name="first_name" placeholder="First Name" required></p>
+                            <p><input type="text" name="last_name" placeholder="Last Name" required></p>
+                            <p><input type="text" name="card_number" placeholder="Card Number" required></p>
+                            <p><input type="text" name="primary_number" placeholder="Primary Number" required></p>
+                            <p><input type="tel" name="mobile_number" placeholder="Mobile Number" required></p>
+                            <p>
+                                <select name="role">
+                                    <option value="USER">User</option>
+                                    <option value="ADMIN">Admin</option>
+                                </select>
+                            </p>
+                            <p><input type="submit" value="Add User"></p>
                         </form>
                     </fieldset>
                 </div>

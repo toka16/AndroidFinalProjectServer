@@ -5,6 +5,7 @@
  */
 package services;
 
+import database.ConnectToDB;
 import db.CategoryManager;
 import db.MenuManager;
 import db.NewsManager;
@@ -38,7 +39,7 @@ import model.json.User;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class admin {
-
+    
     /**
      * Creates a new instance of admin
      */
@@ -49,15 +50,53 @@ public class admin {
     @Path("/login")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response login(@FormParam("username") String username, @FormParam("password") String password, @Context HttpServletRequest request){
-        if(username.equals("admin") && password.equals("admin")){
-            User user = new User();
-            user.role = User.Role.ADMIN;
-            user.first_name = "tornike";
-            request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
-            return Response.ok().build();
-        }
-        return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Invalide Username or Password").build();
+//        User user = ConnectToDB.getUser(username, password);
+//        if(user == null || user.role != User.Role.ADMIN)
+//            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Invalide Username or Password").build();
+        User user = new User();
+        user.role = User.Role.ADMIN;
+        
+        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+
+        return Response.ok().build();
     }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/register")
+    public Response register(@FormParam("email") String email, 
+                            @FormParam("password") String password, 
+                            @FormParam("first_name") String firstName,
+                            @FormParam("last_name") String lastName,
+                            @FormParam("primary_number") String primaryNumber,
+                            @FormParam("mobile_number") String mobileNumber,
+                            @FormParam("card_number") String cardNumber,
+                            @FormParam("role") String role,
+                            @Context HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
+        if(user == null)
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        if(user.role != User.Role.ADMIN)
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can add new Product").build();
+        
+        User new_user = new User();
+        new_user.email = email;
+        new_user.password = password;
+        new_user.first_name = firstName;
+        new_user.last_name = lastName;
+        new_user.mobile_number = mobileNumber;
+        new_user.card_number = cardNumber;
+        new_user.primary_number = primaryNumber;
+        new_user.role = User.Role.valueOf(role);
+        ConnectToDB.insertNewUser(new_user);
+        System.out.println("new user: "+new_user+", role: "+role);
+        
+        return Response.ok().build();
+    }
+    
+    
+    
     
     @POST
     @Path("/logout")
@@ -78,11 +117,11 @@ public class admin {
         
         if(!validateProduct(product))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
+        System.out.println("new product: "+product);
+        ConnectToDB.insertNewProduct(product);
+        System.out.println("product added: "+product);
         
-        if(ProductManager.getInstance().addProduct(product))
-            return Response.ok(product).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("'" + product.name + "' is already in use").build();
+        return Response.ok(product).build();
     }
     
     @PUT
@@ -98,10 +137,10 @@ public class admin {
         if(!validateProduct(product))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        if(ProductManager.getInstance().updateProduct(product))
-            return Response.ok(product).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("can not update product").build();
+        System.out.println("inserting product");
+        ConnectToDB.updateProduct(product);
+        System.out.println("after insert");
+        return Response.ok(product).build();        
     }
     
     @DELETE
@@ -114,7 +153,7 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Product").build();
         
-        ProductManager.getInstance().delete(id);
+        ConnectToDB.deleteProduct(id);
         return Response.ok().build();
     }
     
@@ -130,11 +169,9 @@ public class admin {
         
         if(!validateMenu(menu))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
-        
-        if(MenuManager.getInstance().addMenu(menu))
-            return Response.ok(menu).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("'" + menu.name + "' is already in use").build();
+        menu.products = new int[0];
+        ConnectToDB.insertNewMenu(menu);
+        return Response.ok(menu).build();
     }
     
     @PUT
@@ -150,10 +187,8 @@ public class admin {
         if(!validateMenu(menu))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        if(MenuManager.getInstance().updateMenu(menu))
-            return Response.ok(menu).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("can not update menu").build();
+        ConnectToDB.updateMenu(menu);
+        return Response.ok(menu).build();        
     }
     
     @DELETE
@@ -166,7 +201,7 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Menu").build();
         
-        MenuManager.getInstance().delete(id);
+        ConnectToDB.deleteMenu(id);
         return Response.ok().build();
     }
     
@@ -184,10 +219,8 @@ public class admin {
         if(!validateNews(news))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        if(NewsManager.getInstance().addNews(news))
-            return Response.ok(news).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("'" + news.name + "' is already in use").build();
+        ConnectToDB.insertNews(news);
+        return Response.ok(news).build();
     }
     
     @PUT
@@ -203,10 +236,8 @@ public class admin {
         if(!validateNews(news))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        if(NewsManager.getInstance().updateNews(news))
-            return Response.ok(news).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("can not update news").build();
+        ConnectToDB.updateNews(news);
+        return Response.ok(news).build();
     }
     
     @DELETE
@@ -219,7 +250,7 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete News").build();
         
-        NewsManager.getInstance().delete(id);
+        ConnectToDB.deleteNews(id);
         return Response.ok().build();
     }
     
@@ -235,11 +266,9 @@ public class admin {
         
         if(!validateCategory(category))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
-        
-        if(CategoryManager.getInstance().addCategory(category))
-            return Response.ok(category).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("'" + category.name + "' is already in use").build();
+        category.products = new int[0];
+        ConnectToDB.insertNewCategory(category);
+        return Response.ok(category).build();
     }
     
     @PUT
@@ -255,10 +284,8 @@ public class admin {
         if(!validateCategory(category))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
         
-        if(CategoryManager.getInstance().updateCategory(category))
-            return Response.ok(category).build();
-        
-        return Response.status(Response.Status.CONFLICT).entity("can not change category").build();
+        ConnectToDB.updateCategory(category);
+        return Response.ok(category).build();
     }
     
     
@@ -272,23 +299,23 @@ public class admin {
         if(user.role != User.Role.ADMIN)
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Category").build();
         
-        CategoryManager.getInstance().delete(id);
+        ConnectToDB.deleteCategory(id);
         return Response.ok().build();
     }
 
     private boolean validateProduct(Product product) {
-        return true;
+        return !(product.name == null || product.description == null || product.price <= 0);
     }
 
     private boolean validateMenu(Menu menu) {
-        return true;
+        return !(menu.name == null || menu.description == null || menu.price <= 0);
     }
 
     private boolean validateNews(News news) {
-        return true;
+        return !(news.name == null || news.description == null || news.from_date > news.to_date);
     }
 
     private boolean validateCategory(Category category) {
-        return true;
+        return category.name != null;
     }
 }

@@ -24,7 +24,7 @@ public class ProductManager {
         
         int num = 25;
         for(int i=0; i<num; i++){
-            Product p = new Product(i, "name"+i, "description"+i, i);
+            Product p = new Product("name"+i, "description"+i, i);
             p.image_link = "http://cdn.elite-strategies.com/wp-content/uploads/2014/04/symbol-icon-for-menu-navigation.png";
             products.add(p);
         }

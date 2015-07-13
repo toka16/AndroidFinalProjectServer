@@ -43,4 +43,9 @@ public class User {
         ADMIN,
         USER
     }
+    
+    @Override
+    public String toString(){
+        return email+", "+first_name+", "+last_name+", "+role;
+    }
 }

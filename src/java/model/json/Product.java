@@ -31,11 +31,15 @@ public class Product {
     
     public Product(){}
     
-    public Product(int id, String name, String desc, double price){
-        this.id = id;
+    public Product(String name, String desc, double price){
         this.name = name;
         description = desc;
         this.price = price;
+    }
+    
+    @Override
+    public String toString(){
+        return id+", "+name+", "+description+", "+price+", "+image_link;
     }
     
 }

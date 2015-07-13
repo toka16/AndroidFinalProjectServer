@@ -5,6 +5,7 @@
  */
 package services;
 
+import database.ConnectToDB;
 import db.MenuManager;
 import db.ProductManager;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Constants;
+import model.json.Menu;
 import model.json.Product;
 import model.json.User;
 import model.json.User.Role;
@@ -70,18 +72,22 @@ public class menues {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         
-        return Response.status(Response.Status.OK).entity(MenuManager.getInstance().getMenues()).build();
+        System.out.println("get all menus");
+        Menu[] menus = ConnectToDB.getMenus();
+        System.out.println("after all");
+        return Response.status(Response.Status.OK).entity(menus).build();
     }
     
     
     @GET
     @Path("/{id}/containing_products")
-    public Response getMenuNoncontainingProducts(@PathParam("id") int id, @Context HttpServletRequest request){
+    public Response getMenuContainingProducts(@PathParam("id") int id, @Context HttpServletRequest request){
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(Constants.SESSION_USER_KEY);
         if(user == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        
         
         return Response.ok(MenuManager.getInstance().getMenuContainingProducts(id)).build();
     }
