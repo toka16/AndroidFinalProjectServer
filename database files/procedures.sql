@@ -5,11 +5,11 @@
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `insert_user` $$
 CREATE PROCEDURE `insert_user` (userName nvarchar(32), userSurname nvarchar(32), email varchar(128), 
-							userPassword text, phone varchar(32), card_number text, primary_number text)
+							userPassword text, phone varchar(32), card_number text, primary_number text, isAdmin int)
 BEGIN
 
-	insert into users(user_name, user_surname, user_email, user_password, user_phone, user_card_number, user_primary_number)
-		value(userName, userSurname, email, userPassword, phone, card_number, primary_number);
+	insert into users(user_name, user_surname, user_email, user_password, user_phone, user_card_number, user_primary_number, user_is_admin)
+		value(userName, userSurname, email, userPassword, phone, card_number, primary_number, isAdmin);
 
 END $$
 
@@ -114,7 +114,8 @@ BEGIN
 	select product_id, product_name, description, price, image_link from products
 	left join map_category_product 
 	on products.product_id = map_category_product.id_of_product
-	where map_category_product.id_of_category != categoryID; 
+	where map_category_product.id_of_category != categoryID
+	group by products.product_id; 
 
 END $$
 
@@ -219,6 +220,19 @@ BEGIN
 END $$
 
 
+DELIMITER $$
+
+CREATE PROCEDURE `android_final_project`.`increase_version_number` (itemName nvarchar(32))
+BEGIN
+	declare newVersionNumber int;
+	set newVersionNumber = (select version_number from versions where version_item_name = itemName) + 1;
+
+	update versions
+	set version_number = newVersionNumber
+	where version_item_name = itemName;
+END $$
+
+
 
 
 # selects procedures:
@@ -271,8 +285,86 @@ END $$
 
 
 
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `select_products_by_menu` $$
+CREATE PROCEDURE `select_products_by_menu` (menuID int)
+BEGIN
+	select product_name, description, price, image_link from
+	products inner join map_menu_productproduct
+	on product_id = id_of_product
+	where id_of_menu = menuID;
+
+END $$
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `select_products_out_of_menu` $$
+CREATE PROCEDURE `select_products_out_of_menu` (menuID int)
+BEGIN
+
+	select product_name, description, price, image_link from
+	products inner join map_menu_product
+	on product_id = id_of_product
+	where id_of_menu != menuID;
+
+END $$
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `select_categories_by_product` $$
+CREATE PROCEDURE `select_categories_by_product` (productID int)
+BEGIN
+
+	select category_id, category_name from
+	categories inner join map_category_product
+	on category_id = id_of_category
+	where id_of_product = productID;
+
+END $$
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `select_categories_out_of_product` $$
+CREATE PROCEDURE `select_categories_out_of_product` (productID int)
+BEGIN
+
+	select category_id, category_name from
+	categories inner join map_category_product
+	on category_id = id_of_category
+	where id_of_product != productID
+	group by category_id;
+
+END $$
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `select_produts` $$
+CREATE PROCEDURE `android_final_project`.`select_produts` ()
+BEGIN
+	select * from products;
+END
 
 #  deletes:
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `remove_product_from_category` $$
+CREATE PROCEDURE `remove_product_from_category` (categoryID int, productID int)
+BEGIN
+
+	delete from map_category_product
+	where id_of_category = categoryID and id_of_product = productID;
+
+END $$
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `remove_product_from_menu` $$
+CREATE PROCEDURE `remove_product_from_menu` (menuID int, productID int)
+BEGIN
+
+	delete from map_menu_product
+	where id_of_menu = menuID and id_of_product = productID;
+
+END $$
+
 
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `remove_user` $$

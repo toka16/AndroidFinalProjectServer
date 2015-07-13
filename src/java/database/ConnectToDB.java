@@ -35,11 +35,13 @@ public class ConnectToDB {
     /**
      * The method adds new user into database;
      * @param user 
+     * @return boolean add or not add a new user.
      */
-    public static void insertNewUser(User user){
+    public static boolean insertNewUser(User user){
+        boolean result = true;
         try {
             Connection connection = connectionPool.getConnection();
-            CallableStatement stmt = connection.prepareCall("call insert_user(?, ?, ?, ?, ?, ?, ?)");
+            CallableStatement stmt = connection.prepareCall("call insert_user(?, ?, ?, ?, ?, ?, ?, ?)");
             
             stmt.setString(1, user.first_name);
             stmt.setString(2, user.last_name);
@@ -48,13 +50,19 @@ public class ConnectToDB {
             stmt.setString(5, user.mobile_number);
             stmt.setString(6, user.card_number);
             stmt.setString(7, user.primary_number);
+            stmt.setInt(8, user.role.ordinal());
+            
+            System.out.println("name: " + user.first_name + "  lastname: " + user.last_name + " role: " + user.role.ordinal());
             
             stmt.execute();
             connectionPool.returnConnection(connection);
             stmt.close();
         } catch (SQLException ex) {
-            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
+//            ex.printStackTrace();
         }
+        
+        return result;
     }
     
     
@@ -142,7 +150,7 @@ public class ConnectToDB {
     }
     
     // The method makes connection between category id and product id.
-    private static void fillMapCategoryProduct(int categoryID, int productID){
+    public static void fillMapCategoryProduct(int categoryID, int productID){
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call fill_map_category_product(?, ?)");
@@ -159,7 +167,7 @@ public class ConnectToDB {
     }
     
     // The method makes connection between menu id and product id.
-    private static void fillMapMenuProduct(int menuID, int productID){
+    public static void fillMapMenuProduct(int menuID, int productID){
         try {
             Connection connection = connectionPool.getConnection();
             CallableStatement stmt = connection.prepareCall("call fill_map_menu_product(?, ?)");
@@ -297,8 +305,43 @@ public class ConnectToDB {
         }
     }
     
+    public static void updateVersion(String versionItemName){
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call increase_version_number(?)");
+            
+            stmt.setString(1, versionItemName);
+            
+            stmt.execute();
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+            
     
     // Gets objects:
+    
+    public static int getVersionNumber(String versionItemName){
+        int versionNumber = -1;
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall(" ?= get_version_number(?)");
+            
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setString(2, versionItemName);
+            
+            stmt.execute();
+            
+            versionNumber = stmt.getInt(1);
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return versionNumber;
+    }
     
     /**
      * The method returns all products which is contained by category with a given id.
@@ -376,17 +419,19 @@ public class ConnectToDB {
             stmt.setString(1, email);
             stmt.setString(2, password);
             
-            ResultSet set = stmt.executeQuery();
-            set.next();
-            
-            user = new User();
-            user.first_name = set.getString(2);
-            user.last_name = set.getString(3);
-            user.email = set.getString(4);
-            user.password = set.getString(5);
-            user.mobile_number = set.getString(6);
-            user.card_number = set.getString(7);
-            user.primary_number = set.getString(8);
+            ResultSet resultSet = stmt.executeQuery();
+            while(resultSet.next()){
+                user = new User();
+                user.first_name = resultSet.getString(2);
+                user.last_name = resultSet.getString(3);
+                user.email = resultSet.getString(4);
+                user.password = resultSet.getString(5);
+                user.mobile_number = resultSet.getString(6);
+                user.card_number = resultSet.getString(7);
+                user.primary_number = resultSet.getString(8);
+                User.Role[] roles = User.Role.values();
+                user.role = roles[resultSet.getInt(9)];
+            }
             
             connectionPool.returnConnection(connection);
             stmt.close();
@@ -525,8 +570,151 @@ public class ConnectToDB {
         stmt.close();
     }
     
+    public static Product[] allProductsByMenu(int menuID){
+        List<Product> products = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call select_products_by_menu(?)");
+            
+            stmt.setInt(1, menuID);
+            
+            ResultSet resultSet = stmt.executeQuery();
+            fillProductsList(resultSet, products);
+            
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return products.toArray(new Product[products.size()]);
+    }
+    
+    public static Product[] allProductsOutOfMenu(int menuID){
+        List<Product> products = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call select_products_out_of_menu(?)");
+            
+            stmt.setInt(1, menuID);
+            
+            ResultSet resultSet = stmt.executeQuery();
+            fillProductsList(resultSet, products);
+            
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return products.toArray(new Product[products.size()]);
+    }
+    
+    
+    public static Category[] allCategoriesByProduct(int productID){
+        List<Category> categories = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call select_categories_by_product(?)");
+            
+            stmt.setInt(1, productID);
+            
+            ResultSet resultSet = stmt.executeQuery();
+            fillCategoriesList(resultSet, categories);
+            
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return categories.toArray(new Category[categories.size()]);
+    }
+    
+    private static void fillCategoriesList(ResultSet resultSet, List<Category> categories) throws SQLException{
+        while(resultSet.next()){
+            int id = resultSet.getInt(1);
+            String name = resultSet.getString(2);
+            
+            Category category = new Category(name);
+            category.id = id;
+            
+            fillCategoryByProducts(category);
+            categories.add(category);
+        }
+    }
+    
+    
+    public static Category[] allCategoriesOutOfProduct(int productID){
+        List<Category> categories = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call select_categories_out_of_product(?)");
+            
+            stmt.setInt(1, productID);
+            
+            ResultSet resultSet = stmt.executeQuery();
+            fillCategoriesList(resultSet, categories);
+            
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return categories.toArray(new Category[categories.size()]);
+    }
+    
+    public static Product[] allProducts(){
+        List<Product> products = new ArrayList<>();
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call select_produts()");
+            
+            ResultSet resultSet = stmt.executeQuery();
+            fillProductsList(resultSet, products);
+            
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return products.toArray(new Product[products.size()]);
+    }
+    
     
     // Removes:
+    
+    public static void deleteProductFromCategory(int categoryID, int productID){
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call remove_product_from_category(?, ?)");
+            
+            stmt.setInt(1, categoryID);
+            stmt.setInt(2, productID);
+            
+            stmt.execute();
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void deleteProductFromMenu(int menuID, int productID){
+        try {
+            Connection connection = connectionPool.getConnection();
+            CallableStatement stmt = connection.prepareCall("call remove_product_from_menu(?, ?)");
+            
+            stmt.setInt(1, menuID);
+            stmt.setInt(2, productID);
+            
+            stmt.execute();
+            connectionPool.returnConnection(connection);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     
     public static void deleteUser(int userID){
         try {
