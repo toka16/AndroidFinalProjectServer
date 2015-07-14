@@ -361,7 +361,7 @@ public class ConnectToDB {
         int versionNumber = -1;
         try {
             Connection connection = connectionPool.getConnection();
-            CallableStatement stmt = connection.prepareCall(" ?= get_version_number(?)");
+            CallableStatement stmt = connection.prepareCall(" call select_version_number(?, ?)");
             
             stmt.registerOutParameter(1, Types.INTEGER);
             stmt.setString(2, versionItemName);
@@ -369,6 +369,7 @@ public class ConnectToDB {
             stmt.execute();
             
             versionNumber = stmt.getInt(1);
+            System.out.println(versionItemName+" version number is: "+versionNumber);
             connectionPool.returnConnection(connection);
             stmt.close();
         } catch (SQLException ex) {

@@ -237,9 +237,11 @@ END $$
 
 # selects procedures:
 
+
+
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `select_user` $$
-CREATE PROCEDURE `android_final_project`.`select_user` (userEmail varchar(32), userPassword varchar(16))
+CREATE PROCEDURE `android_final_project`.`select_user` (userEmail varchar(128), userPassword text)
 BEGIN
 
 	select * from users where user_email = userEmail and user_password = userPassword;
@@ -290,7 +292,7 @@ DROP PROCEDURE IF EXISTS `select_products_by_menu` $$
 CREATE PROCEDURE `select_products_by_menu` (menuID int)
 BEGIN
 	select product_name, description, price, image_link from
-	products inner join map_menu_productproduct
+	products inner join map_menu_product
 	on product_id = id_of_product
 	where id_of_menu = menuID;
 
@@ -340,6 +342,13 @@ DROP PROCEDURE IF EXISTS `select_produts` $$
 CREATE PROCEDURE `android_final_project`.`select_produts` ()
 BEGIN
 	select * from products;
+END $$
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `select_version_number` $$
+CREATE PROCEDURE `android_final_project`.`select_version_number` (out vNumber int, vName nvarchar(32))
+BEGIN
+	set vNumber = (select version_number from versions where version_item_name = vName);
 END $$
 
 #  deletes:

@@ -100,13 +100,11 @@ $(document).ready(function(){
             url: 'webapi/menu/'+$("td", this).eq(5).html()+"/containing_products",
             type: "GET",
             success: function(data){
-                if(data.length === 0){
-                    selectAppend('#remove_menu_products', 'default', "No Products");
-                }else{
-                    for(var i=0; i<data.length; i++){
-                        selectAppend('#remove_menu_products', data[i].id, data[i].name);
-                    }
+                $('#remove_menu_products').empty();
+                for(var i=0; i<data.length; i++){
+                    selectAppend('#remove_menu_products', data[i].id, data[i].name);
                 }
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 selectAppend('#remove_menu_products', 'default', "No Products");

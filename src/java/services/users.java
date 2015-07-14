@@ -47,6 +47,7 @@ public class users {
     @POST
     @Path("/login")
     public Response login(@FormParam("email") String email, @FormParam("password") String password, @Context HttpServletRequest request) {
+        System.out.println("login: "+email+" : "+password);
         User user = ConnectToDB.getUser(email, password);
         if(user == null){
             return Response.status(Status.NOT_ACCEPTABLE).entity("Invalide username or password").build();

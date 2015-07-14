@@ -100,6 +100,7 @@ $(document).ready(function(){
             url: 'webapi/product/'+$("td", this).eq(5).html()+"/addable_categories",
             type: 'GET',
             success: function(data){
+                $('#add_product_category').empty();
                 for(var i=0; i<data.length; i++){
                     selectAppend('#add_product_category', data[i].id, data[i].name);
                 }
@@ -115,6 +116,7 @@ $(document).ready(function(){
             url: 'webapi/product/'+$("td", this).eq(5).html()+"/removable_categories",
             type: 'GET',
             success: function(data){
+                $('#remove_product_category').empty();
                 for(var i=0; i<data.length; i++){
                     selectAppend('#remove_product_category', data[i].id, data[i].name);
                 }
