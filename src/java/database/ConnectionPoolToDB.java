@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.util.ArrayDeque;
 
 public class ConnectionPoolToDB {
-    private int connectionCount = 10;
+    private int connectionCount = 100;
 //    private int connectionMaxCount = 100;
     private final String dbServerURL;
     private final String dbUserName;

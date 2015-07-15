@@ -123,6 +123,7 @@ public class admin {
         if(!ConnectToDB.insertNewProduct(product)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_PRODUCT);
         
         return Response.ok(product).build();
     }
@@ -144,6 +145,7 @@ public class admin {
         if(!ConnectToDB.updateProduct(product)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_PRODUCT);
         System.out.println("after insert");
         return Response.ok(product).build();        
     }
@@ -159,6 +161,7 @@ public class admin {
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Product").build();
         
         ConnectToDB.deleteProduct(id);
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_PRODUCT);
         return Response.ok().build();
     }
     
@@ -178,6 +181,7 @@ public class admin {
         if(!ConnectToDB.insertNewMenu(menu)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_MENU);
         return Response.ok(menu).build();
     }
     
@@ -197,6 +201,7 @@ public class admin {
         if(!ConnectToDB.updateMenu(menu)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_MENU);
         return Response.ok(menu).build();        
     }
     
@@ -211,6 +216,7 @@ public class admin {
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Menu").build();
         
         ConnectToDB.deleteMenu(id);
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_MENU);
         return Response.ok().build();
     }
     
@@ -231,6 +237,7 @@ public class admin {
         if(ConnectToDB.insertNews(news)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_NEWS);
         return Response.ok(news).build();
     }
     
@@ -250,6 +257,7 @@ public class admin {
         if(!ConnectToDB.updateNews(news)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_NEWS);
         return Response.ok(news).build();
     }
     
@@ -264,6 +272,7 @@ public class admin {
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete News").build();
         
         ConnectToDB.deleteNews(id);
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_NEWS);
         return Response.ok().build();
     }
     
@@ -279,7 +288,11 @@ public class admin {
         
         if(!validateCategory(category))
             return Response.status(Response.Status.BAD_REQUEST).entity("All fields are required").build();
-        ConnectToDB.insertNewCategory(category);
+        
+        if(!ConnectToDB.insertNewCategory(category)){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_CATEGORY);
         return Response.ok(category).build();
     }
     
@@ -299,6 +312,7 @@ public class admin {
         if(!ConnectToDB.updateCategory(category)){
             return Response.status(Response.Status.CONFLICT).build();
         }
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_CATEGORY);
         return Response.ok(category).build();
     }
     
@@ -314,6 +328,7 @@ public class admin {
             return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("Only Admin can delete Category").build();
         
         ConnectToDB.deleteCategory(id);
+        ConnectToDB.updateVersion(ConnectToDB.VERSION_CATEGORY);
         return Response.ok().build();
     }
 
